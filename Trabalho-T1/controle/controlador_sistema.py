@@ -13,13 +13,13 @@ class ControladorSistema:
         self.__tela_sistema = TelaSistema()
 
     def inicializa_sistema(self):
-        pass
+        self.abre_tela()
 
     def pesquisa_produto(self):
         pass
 
     def chama_produtos(self):
-        pass
+        self.__controlador_produto.abre_tela()
 
     def chama_usuario(self):
         pass
@@ -34,4 +34,10 @@ class ControladorSistema:
         pass
 
     def abre_tela(self):
-        pass
+        lista_opcoes = {1: self.chama_produtos, 2: self.chama_usuario, 3: self.chama_supermercado,
+                        4: self.chama_categoria, 0: self.logout}
+
+        while True:
+            opcoes = self.__tela_sistema.tela_opcoes()
+            funcao_escolhida = lista_opcoes[opcoes]
+            funcao_escolhida()
