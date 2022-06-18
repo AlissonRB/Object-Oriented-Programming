@@ -2,5 +2,7 @@
 
 class TelaQualificador():
 
-    def tela_opcoes():
-        pass
+    def pega_dados():
+        titulo = input('Titulo Qualificador: ')
+        descricao = input('Descricao Qualificador: ')
+        return {"titulo": titulo, "descricao": descricao}

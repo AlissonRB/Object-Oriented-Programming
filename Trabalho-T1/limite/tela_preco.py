@@ -2,5 +2,6 @@
 
 class TelaPreco():
 
-    def tela_opcoes():
-        pass
+    def add_preco(self):
+        valor = input("Valor: ") #tem que ser com duas casas decimais
+        return valor 
