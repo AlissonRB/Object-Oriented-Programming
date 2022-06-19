@@ -1,4 +1,4 @@
-from tela.telaUsuario import TelaUsuario
+from limite.telaUsuario import TelaUsuario
 from entidade.usuarioFisico import UsuarioFisico
 from entidade.usuarioJuridico import UsuarioJuridico
 

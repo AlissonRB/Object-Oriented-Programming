@@ -3,9 +3,10 @@ from entidade.qualificador import Qualificador
 from entidade.categoria import Categoria
 
 class Produto:
-    def __init__(self, nome: str, descricao: str, supermercado: Supermercado, categoria: Categoria, info_qualificadores: str): #verificar todos os atributos,getters e setters
+    def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, info_qualificadores: str): #verificar todos os atributos,getters e setters
         self.__nome = nome
         self.__descricao = descricao
+        self.__codigo = codigo
         self.__supermercado = supermercado
         self.__categoria = categoria
         self.__info_qualificadores = info_qualificadores # para instanciar o qualificador
@@ -14,6 +15,10 @@ class Produto:
     @property
     def nome(self):
         return self.__nome
+    
+    @codigo.setter
+    def codigo(self, codigo):
+        self.__codigo = codigo
     
     @nome.setter
     def nome(self, nome):
