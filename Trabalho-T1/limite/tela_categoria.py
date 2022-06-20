@@ -21,7 +21,7 @@ class TelaCategoria(TelaAbstrata):
         print("1 - Incluir Categoria")
         print("2 - Listar Categorias ")
         print("0 - Retornar")
-        num_opcao = self.le_num_inteiro("Escolha a opção: ",[1,2,0])
+        num_opcao = self.le_numero_inteiro("Escolha a opção: ",[1,2,0])
         return num_opcao
 
     def pega_dados(self):
@@ -30,7 +30,7 @@ class TelaCategoria(TelaAbstrata):
         return categoria
     
     def pega_codigo(self, mensagem, codigos_validos):
-        num_opcao = self.le_num_inteiro(mensagem, codigos_validos)
+        num_opcao = self.le_numero_inteiro(mensagem, codigos_validos)
         return num_opcao
     
     def lista_categoria(self, info_categoria):
