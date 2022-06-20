@@ -1,5 +1,5 @@
 from entidade.supermercado import Supermercado
-from tela.telaSupermercado import TelaSupermercado
+from limite.telaSupermercado import TelaSupermercado
 
 
 class ControladorMercado:

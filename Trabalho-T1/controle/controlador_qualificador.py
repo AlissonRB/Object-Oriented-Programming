@@ -28,4 +28,6 @@ class ControladorQualificador:
         if add_qualificador == 1:
             qualificador = self.inclui_qualificador()
             return qualificador
+        else:
+            return None
         

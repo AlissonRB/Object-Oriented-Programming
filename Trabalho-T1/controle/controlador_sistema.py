@@ -2,6 +2,7 @@ from controle.controlador_produto import ControladorProduto
 from controle.controlador_categoria import ControladorCategoria
 from controle.controlador_preco import ControladorPreco
 from controle.controlador_qualificador import ControladorQualificador
+from controle.controladorMercado import ControladorMercado
 from limite.tela_sistema import TelaSistema
 
 from limite.tela_sistema import TelaSistema
@@ -14,6 +15,7 @@ class ControladorSistema:
         self.__controlador_categoria = ControladorCategoria(self)
         self.__controlador_preco = ControladorPreco(self)
         self.__controlador_qualificador = ControladorQualificador(self)
+        self.__controlador_mercado = ControladorMercado(self)
         self.__tela_sistema = TelaSistema()
     
     @property
@@ -31,6 +33,10 @@ class ControladorSistema:
     @property
     def controlador_qualificador(self):
         return self.__controlador_qualificador
+    
+    @property
+    def controlador_mercado(self):
+        return self.__controlador_mercado
 
     def inicializa_sistema(self):
         self.abre_tela()

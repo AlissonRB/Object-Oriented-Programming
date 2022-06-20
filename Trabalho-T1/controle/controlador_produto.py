@@ -1,4 +1,9 @@
+from entidade.qualificador import Qualificador
 from limite.tela_produto import TelaProduto
+from entidade.categoria import Categoria
+from entidade.supermercado import Supermercado
+from entidade.produto import Produto
+from entidade.preco import Preco
 from random import randint
 
 class ControladorProduto:
@@ -8,32 +13,47 @@ class ControladorProduto:
         self.__lista_produtos = []
     
     def cadastrar_produto(self):
-
+        #self.__controlador_sistema.controlador_mercado.lista_de_supermercados() # lista os supermercados
         nome_descricao = self.__tela_produto.pega_dados() #pega nome e descrição do produto
+        nome = nome_descricao["nome"]
+        descricao = nome_descricao["descricao"]
         self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
-        categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega o codigo da categoria
-        preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
-        print(preco.valor, preco.postagem, preco.confirmacao)
+        categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
+        info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
         qualificador = self.__controlador_sistema.controlador_qualificador.incluir_qualificador() # adicina uma lista de qualificadores
         codigo = self.gerar_codigo()
-        if codigo is not None:
-            pass
-            #instancia o produto
+        self.instancia_produto(nome, descricao, supermercado, categoria, qualificador, info_preco)
+        #rever as excessoes
+            
 
+    def instancia_produto(self,nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco):
+        if (nome is not None) and isinstance(nome, str):
+            if (descricao is not None) and isinstance(descricao, str):
+                if (codigo is not None) and isinstance(codigo, int):
+                    if (categoria is not None) and isinstance(categoria, Categoria):
+                        if (info_preco is not None) and isinstance(info_preco,dict):
+                            for qualificador in qualificadores:
+                                if (qualificador is not None) and isinstance(qualificador, Qualificador):
+                                    novo_produto = Produto(nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco)
+                                    self.__lista_produtos.append(novo_produto)
+                                
+                                #rever as excessoes
+
+        pass
     def pesquisar_preco(self):  #fazer pesquisa por qualificador tambem
         produtos = []
         busca_nome = self.__tela_produto.pega_nome_produto()
         qualificador = self.__controlador_sistema.controlador_qualificador.qualificador_na_busca()
-        if qualificador is None:  
+        if qualificador is None:
             for produto in self.__lista_produtos:
                 if produto.nome == busca_nome:
-                    produtos.append(produto)
-        ordenar = self.__tela_produto.pega_codigo("Ordenar resultados: 1 - Preço \n 2- Confirmações 3 - Data de Pestagem:", [1, 2, 3])
+                    produtos.append(produto) #sfazer pesquisa com qualificadores tambem
+        ordenar = self.__tela_produto.pega_codigo("Ordenar resultados: 1 - Preço \n 2- Confirmações 3 - Data de Postagem:", [1, 2, 3])
         #ordena a lista de produtos
-        
+        self.__tela_produto.mostra_resultados_busca(produtos)
 
     def lancar_preco(self):
-        produto = False
+        produto_existe = False
         #lista supermercados
         #pega o supermercado
         self.__controlador_sistema.controlador_categoria.listar_categoria()
@@ -43,23 +63,35 @@ class ControladorProduto:
         for produto in self.__lista_produtos: # checa se o produto existe
             if produto.supermercado == supermercado:
                 if produto.categoria == categoria:
-                    if produto.nome == nome:
-                        produto = True
-                        #comparar qualificadores
-        if produto == True:
-            pass
-        #compara o preço e entao confirma ou adiciona um novo
+                    if produto.nome == nome:  #comparar qualificadores
+                        produto_existe = True
+                        if produto_existe == True:
+                            info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco()
+                            
+                        else:
+                            self.__tela_produto.mostra_msg("Produto não encontrado")
+                        #compara o preço e entao confirma ou adiciona um novo
         
 
-
+    #talvexz tenha que especializar tipo produto.supermercado.nome
     def excluir_produto(self):
-        #seleciona o supermercado
-        #seleciona a categoria
+        produtos_excluir = []
+        codigos_validos = []
+        #seleciona o supermercado, lista os supermercados
+        nome = self.__tela_produto.pega_nome_produto()
+        for produto in self.__lista_produtos:
+            if produto.supermercado == supermercado:
+                if produto.nome == nome:
+                    produtos_excluir.append(produto)
+                    codigos_validos.append(produto.codigo)
+        if len(produtos_excluir) == 0:
+            self.__tela_produto.mostra_msg("Nenhum produto encontrado")
+        else:
+            self.__tela_produto.mostra_resultados_busca(produtos_excluir)
+            excluir = self.__tela_produto.pega_codigo("Selecione o código do produto a excluir", codigos_validos)
+
         #o nome do produto
         #lista os produtos com essa caracteristica e dai o seleciona de acordo com o codigo
-        pass
-
-    def buscar_produto(self):
         pass
 
     def registros_de_um_produto(self):
@@ -82,12 +114,19 @@ class ControladorProduto:
             funcao_escolhida()
     
     def produtos_por_supermercado(self):
+        produtos = []
         #lista os supermercados
         #seleciona um e pra cada produto que tiver aquele supermercado printa ele
-        pass
+        #supermercado = pega um supermercado
+        for item in self.__lista_produtos:
+            if item.supermercado.nome == supermercado:
+                produtos.append(item)
+        self.__tela_produto.mostra_resultados_busca(produtos)
 
 
     def evolucao_precos(self):
+        #seleciona um supermercado
+        #digita um nome e pega um codigo, e para aquele produto faz:
         pass
 
     def gerar_codigo(self):

@@ -35,9 +35,6 @@ class TelaProduto():
         nome = input("Nome do Produto: ")
         descricao = input("Descrição: ")
         return {"nome": nome, "descricao": descricao}
-        
-        # o produto pode receber mais de um qualificador
-        #categoria e supermercado tem que estar cadastrados
     
     def pega_nome_produto(self):
         nome = input("Nome do Produto: ")
@@ -45,9 +42,12 @@ class TelaProduto():
 
     def mostra_resultados_busca(self, lista_busca):
         for produto in lista_busca:
+            print("Resultados da Busca")
             print ("Produto: ", produto.nome)
-            print("Local: ", produto.supermercado)
-            print("Preço: ", produto.preço)
+            print("Codigo: ", produto.codigo)
+            print("Local: ", produto.supermercado.nome) #mesmo esquema
+            print("Preço: ", produto.preço) #colocar preço mais alto
+    
     
     def buscar_produto(self):
         print("----- Pesquisar Preço de um Produto -----")
@@ -65,7 +65,8 @@ class TelaProduto():
         print("Escolha a opcao")
         print("1 - Produtos por Supermercado")
         print("2 - Evolução dos Preços")
-        opcao = int(input("Escolha a opcao:"))
+        print("0 - Voltar ")
+        opcao = self.le_num_inteiro("Selecione uma opção", [1, 2 ,0])
         return opcao
 
     def pega_opcao(self):

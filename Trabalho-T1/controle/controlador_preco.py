@@ -11,5 +11,4 @@ class ControladorPreco:
         valor = self.__tela_preco.add_preco()
         data = datetime.date.today()
         confirmacao = 1
-        novo_preco = Preco(data, valor, confirmacao)
-        return novo_preco
+        return {"data": data, "valor": valor, "confirmacao": confirmacao}

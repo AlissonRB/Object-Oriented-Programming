@@ -1,4 +1,4 @@
-from tela.telaAbstrata import TelaAbstrata
+from limite.telaAbstrata import TelaAbstrata
 
 
 class TelaSupermercado(TelaAbstrata):
