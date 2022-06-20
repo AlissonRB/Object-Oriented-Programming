@@ -1,7 +1,7 @@
-from limite.abstracttela import Tela
+from limite.telaAbstrata import TelaAbstrata
 
 
-class TelaProduto():
+class TelaProduto(TelaAbstrata):
     #fazer tratamento de excessoes
     def tela_opcoes(self):
         print("-------- Produtos ----------")
@@ -13,10 +13,11 @@ class TelaProduto():
         print("6 - Relatórios")
         print("0 - Retornar")
         # alterar produto talvez
-        num_opcao = self.le_num_inteiro("Escolha a opção:", [1,2,3,4,5,6,0])
+        num_opcao = self.le_numero_inteiro("Escolha a opção:", [1,2,3,4,5,6,0])
         return num_opcao
-    
-    def le_num_inteiro(self, mensagem, inteiros_validos):
+
+    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos: [] = None):
+        pass
         while True:
             valor_lido = input(mensagem)
             try:
@@ -35,7 +36,7 @@ class TelaProduto():
         descricao = input("Descrição: ")
         mercado = input("Supermercado: ")
         usuario = input("Email do Usuario: ")
-        tipo_usuario = self.le_num_inteiro("1 - Usuário Fisico \n2 - Usuário Jurídico", [1,2])
+        tipo_usuario = self.le_numero_inteiro("1 - Usuário Fisico \n2 - Usuário Jurídico", [1,2])
         return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado, "usuario": usuario,"tipo_usuario": tipo_usuario}
 
     def pega_nome(self, msg):
@@ -67,15 +68,18 @@ class TelaProduto():
         print("1 - Produtos por Supermercado")
         print("2 - Evolução dos Preços")
         print("0 - Voltar ")
-        opcao = self.le_num_inteiro("Selecione uma opção", [1, 2 ,0])
+        opcao = self.le_numero_inteiro("Selecione uma opção", [1, 2 ,0])
         return opcao
+    
+    def telaopcoes(self):
+        pass
 
     def pega_opcao(self):
-        num_opcao = self.le_num_inteiro("Escolha a opção: ")
+        num_opcao = self.le_numero_inteiro("Escolha a opção: ")
         return num_opcao
 
     def pega_codigo(self, mensagem, codigos_validos):
-        num_opcao = self.le_num_inteiro(mensagem, codigos_validos)
+        num_opcao = self.le_numero_inteiro(mensagem, codigos_validos)
         return num_opcao
 
     def mensagem_pro_usuario(self, msg):

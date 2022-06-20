@@ -1,9 +1,9 @@
-from limite.abstracttela import Tela
+from limite.telaAbstrata import TelaAbstrata
 
-class TelaCategoria(Tela):
+class TelaCategoria(TelaAbstrata):
     pass
 
-    def le_num_inteiro(self, mensagem, inteiros_validos):
+    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos: [] = None):
         while True:
             valor_lido = input(mensagem)
             try:
@@ -38,3 +38,6 @@ class TelaCategoria(Tela):
     
     def mostra_msg(self, msg):
         print(msg)
+    
+    def telaopcoes(self):
+        pass

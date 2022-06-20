@@ -31,7 +31,6 @@ class ControladorProduto:
             usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_fisico(usuario)
         if tipo_usuario == 2:
             usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_juridico(usuario)
-        print(usuario_logado)
         if (usuario_logado is not None):
             supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
             if (supermercado is not None) and isinstance(supermercado,Supermercado):
@@ -187,16 +186,17 @@ class ControladorProduto:
             self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
 
     def evolucao_precos(self):
-        nome_mercado = self.__tela_produto.pega_nome("Nome do mercado")
-        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
-        if (supermercado is not None) and isinstance(supermercado,Supermercado):
-            nome_produto = self.__tela_produto.pega_nome("Nome do Produto")
-            if (nome_produto is not None) and isinstance(nome_produto, str):
-                for produto in self.__lista_produtos:
-                    if produto.nome == nome_produto:
-                        if produto.supermercado == supermercado:
-                            for preco in produto.lista_precos:
-                                info = {"Data": preco.postagem, "Valor": preco.valor}
+        pass
+        #nome_mercado = self.__tela_produto.pega_nome("Nome do mercado")
+        #supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
+        #if (supermercado is not None) and isinstance(supermercado,Supermercado):
+            #nome_produto = self.__tela_produto.pega_nome("Nome do Produto")
+            #if (nome_produto is not None) and isinstance(nome_produto, str):
+                #for produto in self.__lista_produtos:
+                    #if produto.nome == nome_produto:
+                        #if produto.supermercado == supermercado:
+                            #for preco in produto.lista_precos:
+                                #info = {"Data": preco.postagem, "Valor": preco.valor}
 
     def gerar_codigo(self):
         existe  = False
