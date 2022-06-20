@@ -15,7 +15,7 @@ class TelaUsuario(TelaAbstrata):
         cnpj = input("Cnpj: ")
         return {"email": email, "cnpj": cnpj}
 
-    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos: [] = None):
+    def le_numero_inteiro(self, mensagem, inteiros_validos):
         while True:
             valor_lido = input(mensagem)
             try:

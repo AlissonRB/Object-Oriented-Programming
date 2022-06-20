@@ -3,21 +3,23 @@ from controle.controlador_categoria import ControladorCategoria
 from controle.controlador_preco import ControladorPreco
 from controle.controlador_qualificador import ControladorQualificador
 from controle.controladorMercado import ControladorMercado
-from limite.tela_sistema import TelaSistema
-
-from limite.tela_sistema import TelaSistema
+from controle.controladorUsuario import ControladorUsuario
+from entidade.usuarioFisico import UsuarioFisico
+from limite.telaSistema import TelaSistema
 
 
 class ControladorSistema:
 
     def __init__(self):
-        self.__controlador_produto = ControladorProduto(self)
+        self.__usuario_logado = None #associar o usuario que fez o login com esse atributo
+        self.__controlador_produto = ControladorProduto(self, self.__usuario_logado)
         self.__controlador_categoria = ControladorCategoria(self)
         self.__controlador_preco = ControladorPreco(self)
         self.__controlador_qualificador = ControladorQualificador(self)
-        self.__controlador_mercado = ControladorMercado(self)
+        self.__controladorMercado = ControladorMercado(self)
+        self.__controladorUsuario = ControladorUsuario(self)
         self.__tela_sistema = TelaSistema()
-    
+
     @property
     def controlador_produto(self):
         return self.__controlador_produto
@@ -35,8 +37,20 @@ class ControladorSistema:
         return self.__controlador_qualificador
     
     @property
-    def controlador_mercado(self):
-        return self.__controlador_mercado
+    def controladorMercado(self):
+        return self.__controladorMercado
+    
+    @property
+    def controladorUsuario(self):
+        return self.__controladorUsuario
+    
+    @property
+    def usuario_logado(self):
+        return self.__usuario_logado
+    
+    @usuario_logado.setter
+    def usuario_logado(self, usuario_logado):
+        self.__usuario_logado = usuario_logado
 
     def inicializa_sistema(self):
         self.abre_tela()
@@ -48,22 +62,26 @@ class ControladorSistema:
         self.__controlador_produto.abre_tela()
 
     def chama_usuario(self):
-        pass
+        self.__controladorUsuario.abretela()
 
     def chama_supermercado(self):
-        pass
+        self.__controladorMercado.abretela()
 
     def chama_categoria(self):
         self.__controlador_categoria.abre_tela()
+    
+    def cria_dono(self):
+        return self.__controladorUsuario.verifica_usuario_juridico()
 
     def logout(self):
         pass
+
 
     def abre_tela(self):
         lista_opcoes = {1: self.chama_produtos, 2: self.chama_usuario, 3: self.chama_supermercado,
                         4: self.chama_categoria, 0: self.logout}
 
         while True:
-            opcoes = self.__tela_sistema.tela_opcoes()
+            opcoes = self.__tela_sistema.telaopcoes()
             funcao_escolhida = lista_opcoes[opcoes]
             funcao_escolhida()

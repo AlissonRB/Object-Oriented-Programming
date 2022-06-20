@@ -5,28 +5,38 @@ from entidade.supermercado import Supermercado
 from entidade.produto import Produto
 from entidade.preco import Preco
 from random import randint
+from entidade.usuarioFisico import UsuarioFisico
+from entidade.usuarioJuridico import UsuarioJuridico
 
 class ControladorProduto:
-    def __init__(self, controlador_sistema):
+    def __init__(self, controlador_sistema, usuario):
         self.__controlador_sistema = controlador_sistema
         self.__tela_produto = TelaProduto()
         self.__lista_produtos = []
+        self.__usuario = usuario
+
+    @property
+    def usuario(self):
+        return self.__usuario
     
     def cadastrar_produto(self):
         #self.__controlador_sistema.controlador_mercado.lista_de_supermercados() # lista os supermercados
-        nome_descricao = self.__tela_produto.pega_dados() #pega nome e descrição do produto
-        nome = nome_descricao["nome"]
-        descricao = nome_descricao["descricao"]
+        
+        pega_dados = self.__tela_produto.pega_dados() #pega nome,descrição e mercado  do produto
+        nome_mercado = pega_dados["mercado"]
+        nome = pega_dados["nome"]
+        descricao = pega_dados["descricao"]
+        supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(nome_mercado)
         self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
         categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
         info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
         qualificador = self.__controlador_sistema.controlador_qualificador.incluir_qualificador() # adicina uma lista de qualificadores
         codigo = self.gerar_codigo()
-        self.instancia_produto(nome, descricao, supermercado, categoria, qualificador, info_preco)
+        quem_cadastrou = self.__usuario
+        self.instancia_produto(nome, descricao, codigo, supermercado, categoria, qualificador, info_preco, quem_cadastrou)
         #rever as excessoes
-            
 
-    def instancia_produto(self,nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco):
+    def instancia_produto(self,nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco, quem_cadastrou):
         if (nome is not None) and isinstance(nome, str):
             if (descricao is not None) and isinstance(descricao, str):
                 if (codigo is not None) and isinstance(codigo, int):
@@ -36,10 +46,8 @@ class ControladorProduto:
                                 if (qualificador is not None) and isinstance(qualificador, Qualificador):
                                     novo_produto = Produto(nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco)
                                     self.__lista_produtos.append(novo_produto)
-                                
                                 #rever as excessoes
 
-        pass
     def pesquisar_preco(self):  #fazer pesquisa por qualificador tambem
         produtos = []
         busca_nome = self.__tela_produto.pega_nome_produto()

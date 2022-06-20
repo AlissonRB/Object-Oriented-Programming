@@ -30,11 +30,12 @@ class TelaProduto():
                 if inteiros_validos:
                     print("Valores validos:", inteiros_validos)
     
-    def pega_dados(self):
+    def pega_dados(self): #fazer tratamento dos dados
         print("----- Cadastrar Produto -----")
         nome = input("Nome do Produto: ")
         descricao = input("Descrição: ")
-        return {"nome": nome, "descricao": descricao}
+        mercado = input("Supermercado: ")
+        return {"nome": nome, "descricao": descricao, "mercado": mercado}
     
     def pega_nome_produto(self):
         nome = input("Nome do Produto: ")

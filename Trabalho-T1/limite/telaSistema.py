@@ -1,11 +1,11 @@
-from tela.telaAbstrata import TelaAbstrata
+from limite.telaAbstrata import TelaAbstrata
 
 
 class TelaSistema(TelaAbstrata):
     def __init__(self):
         super().__init__()
 
-    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos: [] = None):
+    def le_numero_inteiro(self, mensagem, inteiros_validos):
         while True:
             valor_lido = input(mensagem)
             try:
@@ -20,8 +20,11 @@ class TelaSistema(TelaAbstrata):
 
     def telaopcoes(self):
         print("------Escolha De Telas------")
-        print("1 - Opcoes Usuarios")
-        print("2 - Opcoes Mercado")
-        print("0 - Encerrar Sistema")
-        opcao = self.le_numero_inteiro('Escolha sua opcao: ', [1, 2, 0])
+        print("Escolha a opcao")
+        print("1 - Produtos")
+        print("2 - Usuarios")
+        print("3 - Supermercados")
+        print("4 - Categoria")
+        print("0 - Logout")
+        opcao = self.le_numero_inteiro('Escolha sua opcao: ', [1, 2,3,4, 0])
         return opcao
