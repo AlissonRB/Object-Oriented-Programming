@@ -44,7 +44,7 @@ class TelaProduto():
 
     def produtos_por_mercado(self, info):
         print("Produto: ",info["nome"])
-        print("Preço: ",info["preco"])
+        print("Preço: {:.2f}".format(info["preco"]))
         print("Categoria: ",info["categoria"])
         print("Codigo: ",info["codigo"])
         print("-----------------------------")
@@ -52,7 +52,7 @@ class TelaProduto():
     def mostra_resultados_busca(self, info):
         print("Produto: ",info["nome"])
         print("Qualificador: ",info["qualificador"])
-        print("Preço: ",info["preco"])
+        print("Preço: {:.2f}".format(info["preco"]))
         print("Mercado: ",info["mercado"])
         print("-----------------------------")
 

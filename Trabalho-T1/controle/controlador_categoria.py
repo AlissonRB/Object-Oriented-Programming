@@ -28,9 +28,6 @@ class ControladorCategoria:
         else:
             self.__tela_categoria.mostra_msg("Categoria já cadastrada!")
 
-    def alterar_categoria(self):
-        pass
-
     def gerar_codigo(self):
         existe  = False
         while True:
@@ -44,9 +41,6 @@ class ControladorCategoria:
         else:
             return None
 
-    def excluir_categoria(self): 
-        pass
-
     def listar_categoria(self):
         for categoria in self.__lista_categorias:
             self.__tela_categoria.lista_categoria({"categoria": categoria.descricao, "codigo": categoria.codigo})  #REVER SE É ASSIM MESMO
@@ -56,7 +50,7 @@ class ControladorCategoria:
             if (categoria.codigo == codigo):
                 return categoria
             return None
-    
+
     def pega_codigo(self):
         opcoes = []
         for categoria in self.__lista_categorias:  #serase

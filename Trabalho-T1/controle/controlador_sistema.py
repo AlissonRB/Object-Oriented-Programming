@@ -73,16 +73,13 @@ class ControladorSistema:
     def cria_dono(self):
         return self.__controladorUsuario.verifica_usuario_juridico()
 
-    def logout(self):
-        #self.__controlador_usuario.abre_tela_inicial()
-        pass
 
     def encerra_sistema(self):
         exit(0)
 
     def abre_tela(self):
         lista_opcoes = {1: self.chama_produtos, 2: self.chama_usuario, 3: self.chama_supermercado,
-                        4: self.chama_categoria, 5: self.encerra_sistema, 0: self.logout}
+                        4: self.chama_categoria, 0: self.encerra_sistema,}
 
         while True:
             opcoes = self.__tela_sistema.telaopcoes()

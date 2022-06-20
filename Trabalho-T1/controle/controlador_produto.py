@@ -79,7 +79,7 @@ class ControladorProduto:
                                         produto_existe = True
         return produto_existe
 
-    def pesquisar_preco(self):  #fazer pesquisa por qualificador tambem
+    def pesquisar_preco(self): 
         nome_produto = self.__tela_produto.pega_nome("Nome do produto: ")
         if (nome_produto is not None) and isinstance(nome_produto, str):
             for item in self.__lista_produtos:
@@ -87,7 +87,7 @@ class ControladorProduto:
                         nome = item.nome
                         for qualificador in item.qualificadores:
                             lista = []
-                            quali = qualificador.titulo+qualificador.descricao
+                            quali = qualificador.titulo+":"+qualificador.descricao
                             lista.append(quali)
                         qualificador1 = lista
                         preco = item.confirmacoes.valor

@@ -19,12 +19,9 @@ class TelaCategoria(Tela):
     def tela_opcoes(self):
         print("-------- Categoria ----------")
         print("1 - Incluir Categoria")
-        print("2 - Alterar Categoria")
-        print("3 - Excluir Categoria") #rever esse comando
-        print("4 - Listar Categorias ")
+        print("2 - Listar Categorias ")
         print("0 - Retornar")
-        # alterar categoria talvez
-        num_opcao = self.le_num_inteiro("Escolha a opção: ",[1,2,3,4,0])
+        num_opcao = self.le_num_inteiro("Escolha a opção: ",[1,2,0])
         return num_opcao
 
     def pega_dados(self):
