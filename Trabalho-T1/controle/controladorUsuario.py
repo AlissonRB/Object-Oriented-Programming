@@ -10,6 +10,12 @@ class ControladorUsuario:
         self.__usuariosjuridicos = {}
         self.__telaUsuario = TelaUsuario()
         self.__controladorSistema = controladorSistema
+        #usuarios cadastrados apenas para testes
+        user_juridico = UsuarioJuridico("joao", "joao@", "123")
+        user_fisico = UsuarioFisico("Maria", "maria@", "567")
+        self.__usuariosjuridicos["joao@"] = user_juridico
+        self.__usuariosfisicos["maria@gmail"] = user_fisico
+
 
     @property
     def usuariosfisicos(self):

@@ -24,33 +24,62 @@ class ControladorProduto:
         
         pega_dados = self.__tela_produto.pega_dados() #pega nome,descrição e mercado  do produto
         nome_mercado = pega_dados["mercado"]
-        nome = pega_dados["nome"]
-        descricao = pega_dados["descricao"]
+        nome_produto = pega_dados["nome_produto"]
+        descricao_produto = pega_dados["descricao_produto"]
         supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(nome_mercado)
-        self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
-        categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-        info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
-        qualificador = self.__controlador_sistema.controlador_qualificador.incluir_qualificador() # adicina uma lista de qualificadores
-        codigo = self.gerar_codigo()
-        quem_cadastrou = self.__usuario
-        self.instancia_produto(nome, descricao, codigo, supermercado, categoria, qualificador, info_preco, quem_cadastrou)
-        #rever as excessoes
-
-    def instancia_produto(self,nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco, quem_cadastrou):
-        if (nome is not None) and isinstance(nome, str):
-            if (descricao is not None) and isinstance(descricao, str):
-                if (codigo is not None) and isinstance(codigo, int):
+        if (supermercado is not None):
+            if (nome_produto is not None) and isinstance (nome_produto, str):
+                if (descricao_produto is not None) and isinstance (descricao_produto, str):
+                    self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
+                    categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
                     if (categoria is not None) and isinstance(categoria, Categoria):
-                        if (info_preco is not None) and isinstance(info_preco,dict):
+                        info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
+                        if (info_preco is not None) and isinstance(info_preco["valor"], float): #rever
+                            qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
                             for qualificador in qualificadores:
                                 if (qualificador is not None) and isinstance(qualificador, Qualificador):
-                                    novo_produto = Produto(nome, descricao, codigo, supermercado, categoria, qualificadores, info_preco)
-                                    self.__lista_produtos.append(novo_produto)
-                                #rever as excessoes
+                                        #produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores)
+                                        produto_existe = False #so para testes
+                                        if produto_existe == False:
+                                            while True:
+                                                codigo = self.gerar_codigo()
+                                                if codigo is not None:
+                                                    break
+                                            quem_cadastrou = self.__usuario
+                                            novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores, info_preco) #add quem cadastrou
+                                            self.__lista_produtos.append(novo_produto)
+                                            self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
+                                        else:
+                                            self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
+                                else:
+                                        self.__tela_produto.mensagem_pro_usuario("Qualificador não aceito")
+                        else:
+                            self.__tela_produto.mensagem_pro_usuario("Valor do preço não é um numero de ponto flutuante")
+                    else:
+                        self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
+                else:
+                    self.__tela_produto.mensagem_pro_usuario("Descrição do produto não aceita")
+            else:
+                self.__tela_produto.mensagem_pro_usuario("Nome do produto não aceito")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
+    
+    def verifica_duplicidade_produto(self,nome, categoria, supermercado, qualificadores):
+        produto_existe = False
+        for produto in self.__lista_produtos:
+            if produto.nome == nome:
+                if produto.categoria.codigo == categoria.codigo:
+                    if produto.supermercado == supermercado: #vereficar
+                        for qualificador in produto.qualificadores:
+                            for novo_qualificador in qualificadores:
+                                if qualificador.titulo == novo_qualificador.titulo:
+                                    if qualificador.descricao == novo_qualificador.descricao:
+                                        produto_existe = True
+        return produto_existe
 
     def pesquisar_preco(self):  #fazer pesquisa por qualificador tambem
         produtos = []
-        busca_nome = self.__tela_produto.pega_nome_produto()
+        busca_nome = self.__tela_produto.pega_nome()
         qualificador = self.__controlador_sistema.controlador_qualificador.qualificador_na_busca()
         if qualificador is None:
             for produto in self.__lista_produtos:
@@ -62,23 +91,24 @@ class ControladorProduto:
 
     def lancar_preco(self):
         produto_existe = False
-        #lista supermercados
-        #pega o supermercado
-        self.__controlador_sistema.controlador_categoria.listar_categoria()
-        categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-        nome = self.__tela_produto.pega_nome_produto()
-        qualificadores = self.__controlador_sistema.controlador_qualificador.incluir_qualificador() # adicina uma lista de qualificadores
-        for produto in self.__lista_produtos: # checa se o produto existe
-            if produto.supermercado == supermercado:
-                if produto.categoria == categoria:
-                    if produto.nome == nome:  #comparar qualificadores
-                        produto_existe = True
-                        if produto_existe == True:
-                            info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco()
-                            
-                        else:
-                            self.__tela_produto.mostra_msg("Produto não encontrado")
-                        #compara o preço e entao confirma ou adiciona um novo
+        mercado = self.__tela_produto.pega_nome()
+        supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(mercado) #não esta retornnado o objeto
+        if (supermercado is not None):
+            self.__controlador_sistema.controlador_categoria.listar_categoria() #lista as categorias
+            categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
+            nome_produto = self.__tela_produto.pega_nome()
+            qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
+            produto_existe = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
+            if produto_existe == True:
+                info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco()
+                for produto in self.__lista_produtos:
+                    if nome_produto == produto.nome:
+                        for preco in produto.
+            else:
+                self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
+                            #compara o preço e entao confirma ou adiciona um novo
+        else:
+                self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
         
 
     #talvexz tenha que especializar tipo produto.supermercado.nome
@@ -86,14 +116,14 @@ class ControladorProduto:
         produtos_excluir = []
         codigos_validos = []
         #seleciona o supermercado, lista os supermercados
-        nome = self.__tela_produto.pega_nome_produto()
+        nome = self.__tela_produto.pega_nome()
         for produto in self.__lista_produtos:
             if produto.supermercado == supermercado:
                 if produto.nome == nome:
                     produtos_excluir.append(produto)
                     codigos_validos.append(produto.codigo)
         if len(produtos_excluir) == 0:
-            self.__tela_produto.mostra_msg("Nenhum produto encontrado")
+            self.__tela_produto.mensagem_pro_usuario("Nenhum produto encontrado")
         else:
             self.__tela_produto.mostra_resultados_busca(produtos_excluir)
             excluir = self.__tela_produto.pega_codigo("Selecione o código do produto a excluir", codigos_validos)
@@ -126,11 +156,20 @@ class ControladorProduto:
         #lista os supermercados
         #seleciona um e pra cada produto que tiver aquele supermercado printa ele
         #supermercado = pega um supermercado
-        for item in self.__lista_produtos:
-            if item.supermercado.nome == supermercado:
-                produtos.append(item)
-        self.__tela_produto.mostra_resultados_busca(produtos)
+        nome_mercado = self.__tela_produto.pega_nome
+        if (nome_mercado is not None) and isinstance (nome_mercado, str):
+            supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(nome_mercado)
+            if (supermercado is not None) and isinstance (supermercado,Supermercado):
+                for item in self.__lista_produtos:
+                    if item.supermercado.nome == nome_mercado:
+                        produtos.append(item)
+                self.__tela_produto.mostra_resultados_busca(produtos)
 
+            else:
+                self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Nome do mercado não aceito")
+        
 
     def evolucao_precos(self):
         #seleciona um supermercado

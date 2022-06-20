@@ -19,7 +19,7 @@ class TelaQualificador():
         num_opcao = self.le_num_inteiro(mensagem, codigos_validos)
         return num_opcao
 
-    def pega_dados():
+    def pega_dados(self):
         titulo = input('Titulo Qualificador: ')
         descricao = input('Descricao Qualificador: ')
         return {"titulo": titulo, "descricao": descricao}

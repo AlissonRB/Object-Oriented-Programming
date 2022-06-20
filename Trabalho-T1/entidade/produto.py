@@ -7,24 +7,24 @@ class Produto:
     def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, qualificadores, info_precos): #verificar todos os atributos,getters e setters
         self.__nome = nome
         self.__descricao = descricao
-        self.__codig = codigo
+        self.__codigo = codigo
         self.__supermercado = supermercado
         self.__categoria = categoria
         self.__qualificadores = qualificadores
-        self.__precos = []
+        self.__lista_precos = []
     
     def add_preço(self, informacoes_preco): #rever esse comando
         preco_existe = False
         valor = informacoes_preco["valor"]
         data = informacoes_preco["data"]
         confirmacao = informacoes_preco["confirmacao"]
-        for preco in self.__precos:
+        for preco in self.__lista_precos:
             if preco.valor == valor:
                 preco.confirmacao += 1
                 preco_existe = True
         if preco_existe == False:
             novo_preco = Preco(data, valor, confirmacao)
-            self.__precos.append(novo_preco)
+            self.__lista_precos.append(novo_preco)
     
     @property
     def nome(self):
@@ -43,12 +43,12 @@ class Produto:
         self.__descricao = descricao
     
     @property
-    def codig(self):
-        return self.__codig
+    def codigo(self):
+        return self.__codigo
     
-    @codig.setter
-    def codig(self, codig): #rever esse codig
-        self.__codig = codig
+    @codigo.setter
+    def codig(self, codigo):
+        self.__codig = codigo
     
     @property
     def supermercado(self):

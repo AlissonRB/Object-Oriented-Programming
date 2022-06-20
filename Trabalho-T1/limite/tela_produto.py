@@ -5,7 +5,6 @@ class TelaProduto():
     #fazer tratamento de excessoes
     def tela_opcoes(self):
         print("-------- Produtos ----------")
-        print("Escolha a opcao")
         print("1 - incluir Produto")
         print("2 - Pesquisar Precos de Produtos")
         print("3 - Lançar Preço")
@@ -14,8 +13,8 @@ class TelaProduto():
         print("6 - Relatórios")
         print("0 - Retornar")
         # alterar produto talvez
-        opcao = int(input("Escolha a opcao:"))
-        return opcao
+        num_opcao = self.le_num_inteiro("Escolha a opção:", [1,2,3,4,5,6,0])
+        return num_opcao
     
     def le_num_inteiro(self, mensagem, inteiros_validos):
         while True:
@@ -35,10 +34,10 @@ class TelaProduto():
         nome = input("Nome do Produto: ")
         descricao = input("Descrição: ")
         mercado = input("Supermercado: ")
-        return {"nome": nome, "descricao": descricao, "mercado": mercado}
+        return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado}
     
-    def pega_nome_produto(self):
-        nome = input("Nome do Produto: ")
+    def pega_nome(self):
+        nome = input("Nome: ")
         return nome
 
     def mostra_resultados_busca(self, lista_busca):
@@ -47,7 +46,7 @@ class TelaProduto():
             print ("Produto: ", produto.nome)
             print("Codigo: ", produto.codigo)
             print("Local: ", produto.supermercado.nome) #mesmo esquema
-            print("Preço: ", produto.preço) #colocar preço mais alto
+            #print("Preço: ", produto.preço) #colocar preço mais alto
     
     
     def buscar_produto(self):
@@ -79,5 +78,5 @@ class TelaProduto():
         num_opcao = self.le_num_inteiro(mensagem, codigos_validos)
         return num_opcao
     
-    def mostra_msg(self, msg):
+    def mensagem_pro_usuario(self, msg):
         print(msg)
