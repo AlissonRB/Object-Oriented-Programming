@@ -26,14 +26,13 @@ class Produto:
         if preco_existe == False:
             novo_preco = Preco(data, valor, confirmacao)
             self.__lista_precos.append(novo_preco)
-            for preco in self.__lista_precos:
-                if novo_preco.confirmacao >= preco.confirmacao :
-                    self.__confirmacoes = novo_preco
+
+        self.maior_confirmacao()
     
     def maior_confirmacao(self):
-        confirmacoes = 0
+        self.__confirmacoes = self.__lista_precos[0]
         for preco in self.__lista_precos:
-            if preco.confirmacao > confirmacoes:
+            if preco.confirmacao > self.__confirmacoes.confirmacao:
                 self.__confirmacoes = preco
     
     @property

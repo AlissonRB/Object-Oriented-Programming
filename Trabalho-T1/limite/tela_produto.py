@@ -29,7 +29,7 @@ class TelaProduto():
                 if inteiros_validos:
                     print("Valores validos: ", inteiros_validos)
     
-    def pega_dados(self): #fazer tratamento dos dados
+    def pega_dados(self):
         print("----- Cadastrar Produto -----")
         nome = input("Nome do Produto: ")
         descricao = input("Descrição: ")
@@ -38,35 +38,29 @@ class TelaProduto():
         tipo_usuario = self.le_num_inteiro("1 - Usuário Fisico \n 2 - Usuário Jurídico", [1,2])
         return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado, "usuario": usuario,"tipo_usuario": tipo_usuario}
 
-    
     def pega_nome(self, msg):
         nome = input(msg)
         return nome
 
-    def mostra_resultados_busca(self, lista_busca):
-        for produto in lista_busca:
-            print("Resultados da Busca")
-            print ("Produto: ", produto.nome)
-            print("Codigo: ", produto.codigo)
-            print("Local: ", produto.supermercado.nome) #mesmo esquema
-            print("Preço: ", produto.confirmacoes.valor)
+    def produtos_por_mercado(self, info):
+        print("Produto: ",info["nome"])
+        print("Preço: ",info["preco"])
+        print("Categoria: ",info["categoria"])
+        print("Codigo: ",info["codigo"])
+        print("-----------------------------")
     
+    def mostra_resultados_busca(self, info):
+        print("Produto: ",info["nome"])
+        print("Qualificador: ",info["qualificador"])
+        print("Preço: ",info["preco"])
+        print("Mercado: ",info["mercado"])
+        print("-----------------------------")
+
     def evolucao_precos(self,info):
         print(info[""])
         print(info[""])
         print(info[""])
-    
-    def buscar_produto(self):
-        print("----- Pesquisar Preço de um Produto -----")
-        nome = input('Nome do produto: ')
-        while True:
-            qualificador = input('Qualificador (opcional): ')
-            if qualificador != None:
-                descricao = input('Descrição do qualificador: ')
-            else:
-                break
-        return {"nome": nome} # retorn qualificadores
-    
+
     def relatorios(self):
         print("-------- Relatórios ----------")
         print("Escolha a opcao")
@@ -79,11 +73,10 @@ class TelaProduto():
     def pega_opcao(self):
         num_opcao = self.le_num_inteiro("Escolha a opção: ")
         return num_opcao
-    
-    
+
     def pega_codigo(self, mensagem, codigos_validos):
         num_opcao = self.le_num_inteiro(mensagem, codigos_validos)
         return num_opcao
-    
+
     def mensagem_pro_usuario(self, msg):
         print(msg)
