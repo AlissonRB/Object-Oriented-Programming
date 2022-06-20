@@ -31,6 +31,7 @@ class ControladorProduto:
             usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_fisico(usuario)
         if tipo_usuario == 2:
             usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_juridico(usuario)
+        print(usuario_logado)
         if (usuario_logado is not None):
             supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
             if (supermercado is not None) and isinstance(supermercado,Supermercado):
@@ -44,12 +45,11 @@ class ControladorProduto:
                                 qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
                                 for qualificador in qualificadores:
                                     if (qualificador is not None) and isinstance(qualificador, Qualificador):
-                                            produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores, usuario_logado)
+                                            produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores)
                                             if produto_existe == False:
                                                 codigo = self.gerar_codigo()
                                                 if (codigo is not None) and isinstance(codigo, str):
-                                                    quem_cadastrou = None
-                                                    novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores) #add quem cadastrou
+                                                    novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores,usuario_logado) #add quem cadastrou
                                                     novo_produto.add_preco(info_preco)
                                                     self.__lista_produtos.append(novo_produto)
                                                     self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
