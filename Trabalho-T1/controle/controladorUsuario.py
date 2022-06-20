@@ -12,9 +12,11 @@ class ControladorUsuario:
         self.__controladorSistema = controladorSistema
         #usuarios cadastrados apenas para testes
         user_juridico = UsuarioJuridico("joao", "joao@", "123")
+        user_juridico2 = UsuarioJuridico("beto", "beto@", "444")
         user_fisico = UsuarioFisico("Maria", "maria@", "567")
         self.__usuariosjuridicos["joao@"] = user_juridico
-        self.__usuariosfisicos["maria@gmail"] = user_fisico
+        self.__usuariosjuridicos["beto@"] = user_juridico2
+        self.__usuariosfisicos["maria@"] = user_fisico
 
 
     @property
@@ -43,6 +45,18 @@ class ControladorUsuario:
         for usario_fisico in self.__usuariosfisicos:
             if usario_fisico == email:
                 return usario_fisico
+        return None
+
+    def retorna_usuario_fisico(self, email: str):
+        for usuario in self.__usuariosfisicos:
+            if usuario == email:
+                return self.__usuariosfisicos[usuario]
+        return None
+    
+    def retorna_usuario_juridico(self, email: str):
+        for usuario in self.__usuariosfisicos:
+            if usuario == email:
+                return self.__usuariosfisicos[usuario]
         return None
 
     def realizaloginfisico(self):

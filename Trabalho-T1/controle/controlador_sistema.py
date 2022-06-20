@@ -12,7 +12,7 @@ class ControladorSistema:
 
     def __init__(self):
         self.__usuario_logado = None #associar o usuario que fez o login com esse atributo
-        self.__controlador_produto = ControladorProduto(self, self.__usuario_logado)
+        self.__controlador_produto = ControladorProduto(self)
         self.__controlador_categoria = ControladorCategoria(self)
         self.__controlador_preco = ControladorPreco(self)
         self.__controlador_qualificador = ControladorQualificador(self)
@@ -75,14 +75,10 @@ class ControladorSistema:
 
     def logout(self):
         #self.__controlador_usuario.abre_tela_inicial()
-        nome = input("nome para busca")
-        mercado = (self.__controladorMercado.retorna_supermercado(nome))
-        print(mercado.nome)
-        print(mercado.endereco)
-        print(mercado.dono)
+        pass
+
     def encerra_sistema(self):
         exit(0)
-
 
     def abre_tela(self):
         lista_opcoes = {1: self.chama_produtos, 2: self.chama_usuario, 3: self.chama_supermercado,

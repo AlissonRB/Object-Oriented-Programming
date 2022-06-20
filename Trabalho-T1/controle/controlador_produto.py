@@ -1,3 +1,4 @@
+from re import T
 from entidade.qualificador import Qualificador
 from limite.tela_produto import TelaProduto
 from entidade.categoria import Categoria
@@ -9,11 +10,10 @@ from entidade.usuarioFisico import UsuarioFisico
 from entidade.usuarioJuridico import UsuarioJuridico
 
 class ControladorProduto:
-    def __init__(self, controlador_sistema, usuario):
+    def __init__(self, controlador_sistema):
         self.__controlador_sistema = controlador_sistema
         self.__tela_produto = TelaProduto()
         self.__lista_produtos = []
-        self.__usuario = usuario
 
     @property
     def usuario(self):
@@ -25,6 +25,9 @@ class ControladorProduto:
         nome_mercado = pega_dados["mercado"]
         nome_produto = pega_dados["nome_produto"]
         descricao_produto = pega_dados["descricao_produto"]
+        usuario = pega_dados["usuario"]
+        tipo_usuario = pega_dados["tipo_usuario"]
+
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
         if (supermercado is not None) and isinstance(supermercado,Supermercado):
             if (nome_produto is not None) and isinstance (nome_produto, str):
@@ -43,7 +46,7 @@ class ControladorProduto:
                                                 codigo = self.gerar_codigo()
                                                 if codigo is not None:
                                                     break
-                                            quem_cadastrou = self.__usuario
+                                            quem_cadastrou = None
                                             novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores) #add quem cadastrou
                                             novo_produto.add_preco(info_preco)
                                             self.__lista_produtos.append(novo_produto)
@@ -51,7 +54,7 @@ class ControladorProduto:
                                         else:
                                             self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
                                 else:
-                                        self.__tela_produto.mensagem_pro_usuario("Qualificador não aceito")
+                                    self.__tela_produto.mensagem_pro_usuario("Qualificador não aceito")
                         else:
                             self.__tela_produto.mensagem_pro_usuario("Valor do preço não é um numero de ponto flutuante")
                     else:
@@ -90,20 +93,22 @@ class ControladorProduto:
 
     def lancar_preco(self):
         produto_existe = False
-        mercado = self.__tela_produto.pega_nome("Nome do mercado")
+        mercado = self.__tela_produto.pega_nome("Nome do mercado: ")
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(mercado)
         if (supermercado is not None) and isinstance(supermercado,Supermercado):
             self.__controlador_sistema.controlador_categoria.listar_categoria() #lista as categorias
             categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-            nome_produto = self.__tela_produto.pega_nome("Nome do produto")
+            nome_produto = self.__tela_produto.pega_nome("Nome do produto: ")
             qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
             produto_existe = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
             if produto_existe == True:
                 info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco()
                 for produto in self.__lista_produtos:
                     if nome_produto == produto.nome:
-                        produto.add_preco(info_preco)
-                        self.__tela_produto.mensagem_pro_usuario("Novo preço lançado")
+                        if produto.supermercado == supermercado:
+                            if produto.categoria == categoria:
+                                produto.add_preco(info_preco)
+                                self.__tela_produto.mensagem_pro_usuario("Novo preço lançado")
             else:
                 self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
                             #compara o preço e entao confirma ou adiciona um novo
@@ -169,7 +174,6 @@ class ControladorProduto:
                 self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
         else:
             self.__tela_produto.mensagem_pro_usuario("Nome do mercado não aceito")
-        
 
     def evolucao_precos(self):
         nome_mercado = self.__tela_produto.pega_nome("Nome do mercado")
@@ -181,10 +185,8 @@ class ControladorProduto:
                     if produto.nome == nome_produto:
                         if produto.supermercado == supermercado:
                             for preco in produto.lista_precos:
-                                print(preco.postagem)
-                                print(preco.valor)
-                                print(preco.confirmacao)
-                                print("--------")
+                                info = {"Data": preco.postagem, "Valor": preco.valor, "Mercado": preco.mercado}
+
 
     def gerar_codigo(self):
         existe  = False

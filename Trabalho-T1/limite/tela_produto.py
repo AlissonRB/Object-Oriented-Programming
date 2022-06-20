@@ -27,14 +27,17 @@ class TelaProduto():
             except ValueError:
                 print("Valor incorreto: Digite um valor numérico valido")
                 if inteiros_validos:
-                    print("Valores validos:", inteiros_validos)
+                    print("Valores validos: ", inteiros_validos)
     
     def pega_dados(self): #fazer tratamento dos dados
         print("----- Cadastrar Produto -----")
         nome = input("Nome do Produto: ")
         descricao = input("Descrição: ")
         mercado = input("Supermercado: ")
-        return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado}
+        usuario = input("Email do Usuario: ")
+        tipo_usuario = self.le_num_inteiro("1 - Usuário Fisico \n 2 - Usuário Jurídico", [1,2])
+        return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado, "usuario": usuario,"tipo_usuario": tipo_usuario}
+
     
     def pega_nome(self, msg):
         nome = input(msg)
@@ -46,9 +49,12 @@ class TelaProduto():
             print ("Produto: ", produto.nome)
             print("Codigo: ", produto.codigo)
             print("Local: ", produto.supermercado.nome) #mesmo esquema
-            print("Preço: ", produto.confirmacoes.valor) 
-
+            print("Preço: ", produto.confirmacoes.valor)
     
+    def evolucao_precos(self,info):
+        print(info[""])
+        print(info[""])
+        print(info[""])
     
     def buscar_produto(self):
         print("----- Pesquisar Preço de um Produto -----")
