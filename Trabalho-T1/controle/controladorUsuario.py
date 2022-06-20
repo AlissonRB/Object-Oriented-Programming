@@ -54,9 +54,9 @@ class ControladorUsuario:
         return None
     
     def retorna_usuario_juridico(self, email: str):
-        for usuario in self.__usuariosfisicos:
+        for usuario in self.__usuariosjuridicos:
             if usuario == email:
-                return self.__usuariosfisicos[usuario]
+                return self.__usuariosjuridicos[usuario]
         return None
 
     def realizaloginfisico(self):

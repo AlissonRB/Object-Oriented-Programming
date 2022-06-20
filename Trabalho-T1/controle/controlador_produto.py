@@ -27,44 +27,50 @@ class ControladorProduto:
         descricao_produto = pega_dados["descricao_produto"]
         usuario = pega_dados["usuario"]
         tipo_usuario = pega_dados["tipo_usuario"]
-
-        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
-        if (supermercado is not None) and isinstance(supermercado,Supermercado):
-            if (nome_produto is not None) and isinstance (nome_produto, str):
-                if (descricao_produto is not None) and isinstance (descricao_produto, str):
-                    self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
-                    categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-                    if (categoria is not None) and isinstance(categoria, Categoria):
-                        info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
-                        if (info_preco is not None) and isinstance(info_preco["valor"], float): #rever
-                            qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
-                            for qualificador in qualificadores:
-                                if (qualificador is not None) and isinstance(qualificador, Qualificador):
-                                        produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores)
-                                        if produto_existe == False:
-                                            codigo = self.gerar_codigo()
-                                            if (codigo is not None) and isinstance(codigo, str):
-                                                quem_cadastrou = None
-                                                novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores) #add quem cadastrou
-                                                novo_produto.add_preco(info_preco)
-                                                self.__lista_produtos.append(novo_produto)
-                                                self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
+        if tipo_usuario == 1:
+            usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_fisico(usuario)
+        if tipo_usuario == 2:
+            usuario_logado = self.__controlador_sistema.controladorUsuario.retorna_usuario_juridico(usuario)
+        if (usuario_logado is not None):
+            supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
+            if (supermercado is not None) and isinstance(supermercado,Supermercado):
+                if (nome_produto is not None) and isinstance (nome_produto, str):
+                    if (descricao_produto is not None) and isinstance (descricao_produto, str):
+                        self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
+                        categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
+                        if (categoria is not None) and isinstance(categoria, Categoria):
+                            info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco() #add preco
+                            if (info_preco is not None) and isinstance(info_preco["valor"], float): #rever
+                                qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
+                                for qualificador in qualificadores:
+                                    if (qualificador is not None) and isinstance(qualificador, Qualificador):
+                                            produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores, usuario_logado)
+                                            if produto_existe == False:
+                                                codigo = self.gerar_codigo()
+                                                if (codigo is not None) and isinstance(codigo, str):
+                                                    quem_cadastrou = None
+                                                    novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores) #add quem cadastrou
+                                                    novo_produto.add_preco(info_preco)
+                                                    self.__lista_produtos.append(novo_produto)
+                                                    self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
+                                                else:
+                                                    self.__tela_produto.mensagem_pro_usuario("Não há codigos disponíveis")
                                             else:
-                                                self.__tela_produto.mensagem_pro_usuario("Não há codigos disponíveis")
-                                        else:
-                                            self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
-                                else:
-                                    self.__tela_produto.mensagem_pro_usuario("Qualificador não aceito")
+                                                self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
+                                    else:
+                                        self.__tela_produto.mensagem_pro_usuario("Qualificador não aceito")
+                            else:
+                                self.__tela_produto.mensagem_pro_usuario("Valor do preço não é um numero de ponto flutuante")
                         else:
-                            self.__tela_produto.mensagem_pro_usuario("Valor do preço não é um numero de ponto flutuante")
+                            self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
                     else:
-                        self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
+                        self.__tela_produto.mensagem_pro_usuario("Descrição do produto não aceita")
                 else:
-                    self.__tela_produto.mensagem_pro_usuario("Descrição do produto não aceita")
+                    self.__tela_produto.mensagem_pro_usuario("Nome do produto não aceito")
             else:
-                self.__tela_produto.mensagem_pro_usuario("Nome do produto não aceito")
+                self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
         else:
-            self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
+            self.__tela_produto.mensagem_pro_usuario("Usuario não encontrado")
     
     def verifica_duplicidade_produto(self,nome, categoria, supermercado, qualificadores):
         produto_existe = False

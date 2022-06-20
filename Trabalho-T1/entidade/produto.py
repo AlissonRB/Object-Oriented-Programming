@@ -4,7 +4,7 @@ from entidade.categoria import Categoria
 from entidade.supermercado import Supermercado
 
 class Produto:
-    def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, qualificadores): #verificar todos os atributos,getters e setters
+    def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, qualificadores,usuario): #verificar todos os atributos,getters e setters
         self.__nome = nome
         self.__descricao = descricao
         self.__codigo = codigo
@@ -13,6 +13,7 @@ class Produto:
         self.__qualificadores = qualificadores
         self.__lista_precos = []
         self.__confirmacoes = None #pega o preco que tem mais confirmaçoes
+        self.__usuario = usuario
     
     def add_preco(self, informacoes_preco): #rever esse comando
         preco_existe = False
@@ -98,4 +99,12 @@ class Produto:
     @confirmacoes.setter
     def confirmacoes(self, confirmacoes):
         self.__confirmacoes = confirmacoes
+    
+    @property
+    def usuario(self):
+        return self.__usuario
+    
+    @usuario.setter
+    def usuario(self, usuario):
+        self.__usuario = usuario
 

@@ -35,7 +35,7 @@ class TelaProduto():
         descricao = input("Descrição: ")
         mercado = input("Supermercado: ")
         usuario = input("Email do Usuario: ")
-        tipo_usuario = self.le_num_inteiro("1 - Usuário Fisico \n 2 - Usuário Jurídico", [1,2])
+        tipo_usuario = self.le_num_inteiro("1 - Usuário Fisico \n2 - Usuário Jurídico", [1,2])
         return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado, "usuario": usuario,"tipo_usuario": tipo_usuario}
 
     def pega_nome(self, msg):
