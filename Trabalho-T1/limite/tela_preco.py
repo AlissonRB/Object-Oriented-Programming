@@ -3,8 +3,11 @@
 class TelaPreco():
 
     def add_preco(self):
+        while True:
+            valor = input("Valor do Produto(duas cadas decimais): ")
+            try:
+                novo_valor = float(valor)
 
-        valor = float(input("Valor do Produto(duas cadas decimais): ")) #tem que ser com duas casas decimais fazer tratamento de excessoes
-        return valor
-    
-    
+                return novo_valor
+            except : #except ValueError:
+                print("Valor incorreto: Digite um valor numérico valido")

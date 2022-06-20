@@ -20,14 +20,13 @@ class ControladorProduto:
         return self.__usuario
     
     def cadastrar_produto(self):
-        #self.__controlador_sistema.controlador_mercado.lista_de_supermercados() # lista os supermercados
-        
+
         pega_dados = self.__tela_produto.pega_dados() #pega nome,descrição e mercado  do produto
         nome_mercado = pega_dados["mercado"]
         nome_produto = pega_dados["nome_produto"]
         descricao_produto = pega_dados["descricao_produto"]
-        supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(nome_mercado)
-        if (supermercado is not None):
+        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
+        if (supermercado is not None) and isinstance(supermercado,Supermercado):
             if (nome_produto is not None) and isinstance (nome_produto, str):
                 if (descricao_produto is not None) and isinstance (descricao_produto, str):
                     self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
@@ -38,15 +37,15 @@ class ControladorProduto:
                             qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
                             for qualificador in qualificadores:
                                 if (qualificador is not None) and isinstance(qualificador, Qualificador):
-                                        #produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores)
-                                        produto_existe = False #so para testes
+                                        produto_existe = self.verifica_duplicidade_produto(nome_produto,categoria, supermercado, qualificadores)
                                         if produto_existe == False:
                                             while True:
                                                 codigo = self.gerar_codigo()
                                                 if codigo is not None:
                                                     break
                                             quem_cadastrou = self.__usuario
-                                            novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores, info_preco) #add quem cadastrou
+                                            novo_produto = Produto(nome_produto, descricao_produto, codigo, supermercado, categoria, qualificadores) #add quem cadastrou
+                                            novo_produto.add_preco(info_preco)
                                             self.__lista_produtos.append(novo_produto)
                                             self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
                                         else:
@@ -69,7 +68,7 @@ class ControladorProduto:
         for produto in self.__lista_produtos:
             if produto.nome == nome:
                 if produto.categoria.codigo == categoria.codigo:
-                    if produto.supermercado == supermercado: #vereficar
+                    if produto.supermercado == supermercado:
                         for qualificador in produto.qualificadores:
                             for novo_qualificador in qualificadores:
                                 if qualificador.titulo == novo_qualificador.titulo:
@@ -79,31 +78,32 @@ class ControladorProduto:
 
     def pesquisar_preco(self):  #fazer pesquisa por qualificador tambem
         produtos = []
-        busca_nome = self.__tela_produto.pega_nome()
+        busca_nome = self.__tela_produto.pega_nome("Nome do produto")
         qualificador = self.__controlador_sistema.controlador_qualificador.qualificador_na_busca()
         if qualificador is None:
             for produto in self.__lista_produtos:
                 if produto.nome == busca_nome:
                     produtos.append(produto) #sfazer pesquisa com qualificadores tambem
-        ordenar = self.__tela_produto.pega_codigo("Ordenar resultados: 1 - Preço \n 2- Confirmações 3 - Data de Postagem:", [1, 2, 3])
+        #ordenar = self.__tela_produto.pega_codigo("Ordenar resultados: 1 - Preço \n 2- Confirmações 3 - Data de Postagem:", [1, 2, 3])
         #ordena a lista de produtos
         self.__tela_produto.mostra_resultados_busca(produtos)
 
     def lancar_preco(self):
         produto_existe = False
-        mercado = self.__tela_produto.pega_nome()
-        supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(mercado) #não esta retornnado o objeto
-        if (supermercado is not None):
+        mercado = self.__tela_produto.pega_nome("Nome do mercado")
+        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(mercado)
+        if (supermercado is not None) and isinstance(supermercado,Supermercado):
             self.__controlador_sistema.controlador_categoria.listar_categoria() #lista as categorias
             categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-            nome_produto = self.__tela_produto.pega_nome()
+            nome_produto = self.__tela_produto.pega_nome("Nome do produto")
             qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
             produto_existe = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
             if produto_existe == True:
                 info_preco = self.__controlador_sistema.controlador_preco.incluir_novo_preco()
                 for produto in self.__lista_produtos:
                     if nome_produto == produto.nome:
-                        for preco in produto.
+                        produto.add_preco(info_preco)
+                        self.__tela_produto.mensagem_pro_usuario("Novo preço lançado")
             else:
                 self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
                             #compara o preço e entao confirma ou adiciona um novo
@@ -116,7 +116,7 @@ class ControladorProduto:
         produtos_excluir = []
         codigos_validos = []
         #seleciona o supermercado, lista os supermercados
-        nome = self.__tela_produto.pega_nome()
+        nome = self.__tela_produto.pega_nome("Nome do produto")
         for produto in self.__lista_produtos:
             if produto.supermercado == supermercado:
                 if produto.nome == nome:
@@ -156,7 +156,7 @@ class ControladorProduto:
         #lista os supermercados
         #seleciona um e pra cada produto que tiver aquele supermercado printa ele
         #supermercado = pega um supermercado
-        nome_mercado = self.__tela_produto.pega_nome
+        nome_mercado = self.__tela_produto.pega_nome("Nome do Mercado")
         if (nome_mercado is not None) and isinstance (nome_mercado, str):
             supermercado = self.__controlador_sistema.controladorMercado.pega_supermercado(nome_mercado)
             if (supermercado is not None) and isinstance (supermercado,Supermercado):
@@ -172,9 +172,19 @@ class ControladorProduto:
         
 
     def evolucao_precos(self):
-        #seleciona um supermercado
-        #digita um nome e pega um codigo, e para aquele produto faz:
-        pass
+        nome_mercado = self.__tela_produto.pega_nome("Nome do mercado")
+        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
+        if (supermercado is not None) and isinstance(supermercado,Supermercado):
+            nome_produto = self.__tela_produto.pega_nome("Nome do Produto")
+            if (nome_produto is not None) and isinstance(nome_produto, str):
+                for produto in self.__lista_produtos:
+                    if produto.nome == nome_produto:
+                        if produto.supermercado == supermercado:
+                            for preco in produto.lista_precos:
+                                print(preco.postagem)
+                                print(preco.valor)
+                                print(preco.confirmacao)
+                                print("--------")
 
     def gerar_codigo(self):
         existe  = False

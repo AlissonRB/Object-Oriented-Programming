@@ -36,8 +36,8 @@ class TelaProduto():
         mercado = input("Supermercado: ")
         return {"nome_produto": nome, "descricao_produto": descricao, "mercado": mercado}
     
-    def pega_nome(self):
-        nome = input("Nome: ")
+    def pega_nome(self, msg):
+        nome = input(msg)
         return nome
 
     def mostra_resultados_busca(self, lista_busca):
@@ -46,7 +46,8 @@ class TelaProduto():
             print ("Produto: ", produto.nome)
             print("Codigo: ", produto.codigo)
             print("Local: ", produto.supermercado.nome) #mesmo esquema
-            #print("Preço: ", produto.preço) #colocar preço mais alto
+            print("Preço: ", produto.confirmacoes.valor) 
+
     
     
     def buscar_produto(self):

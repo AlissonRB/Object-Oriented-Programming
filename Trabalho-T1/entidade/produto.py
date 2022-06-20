@@ -4,7 +4,7 @@ from entidade.categoria import Categoria
 from entidade.supermercado import Supermercado
 
 class Produto:
-    def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, qualificadores, info_precos): #verificar todos os atributos,getters e setters
+    def __init__(self, nome: str, descricao: str, codigo: int, supermercado: Supermercado, categoria: Categoria, qualificadores): #verificar todos os atributos,getters e setters
         self.__nome = nome
         self.__descricao = descricao
         self.__codigo = codigo
@@ -12,8 +12,9 @@ class Produto:
         self.__categoria = categoria
         self.__qualificadores = qualificadores
         self.__lista_precos = []
+        self.__confirmacoes = None #pega o preco que tem mais confirmaçoes
     
-    def add_preço(self, informacoes_preco): #rever esse comando
+    def add_preco(self, informacoes_preco): #rever esse comando
         preco_existe = False
         valor = informacoes_preco["valor"]
         data = informacoes_preco["data"]
@@ -25,6 +26,15 @@ class Produto:
         if preco_existe == False:
             novo_preco = Preco(data, valor, confirmacao)
             self.__lista_precos.append(novo_preco)
+            for preco in self.__lista_precos:
+                if novo_preco.confirmacao >= preco.confirmacao :
+                    self.__confirmacoes = novo_preco
+    
+    def maior_confirmacao(self):
+        confirmacoes = 0
+        for preco in self.__lista_precos:
+            if preco.confirmacao > confirmacoes:
+                self.__confirmacoes = preco
     
     @property
     def nome(self):
@@ -67,12 +77,12 @@ class Produto:
         self.__categoria = categoria
     
     @property
-    def precos(self):
-        return self.__precos
+    def lista_precos(self):
+        return self.__lista_precos
     
-    @precos.setter
+    @lista_precos.setter
     def precos(self, precos):
-        self.__precos = precos
+        self.__lista_precos = precos
     
     @property
     def qualificadores(self):
@@ -81,4 +91,12 @@ class Produto:
     @qualificadores.setter
     def qualificadores(self, qualificadores):
         self.__qualificadores = qualificadores
+    
+    @property
+    def confirmacoes(self):
+        return self.__confirmacoes
+    
+    @confirmacoes.setter
+    def confirmacoes(self, confirmacoes):
+        self.__confirmacoes = confirmacoes
 

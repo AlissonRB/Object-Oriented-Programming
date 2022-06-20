@@ -76,7 +76,10 @@ class ControladorSistema:
     def logout(self):
         #self.__controlador_usuario.abre_tela_inicial()
         nome = input("nome para busca")
-        self.__controladorMercado.retorna_supermercado(nome)
+        mercado = (self.__controladorMercado.retorna_supermercado(nome))
+        print(mercado.nome)
+        print(mercado.endereco)
+        print(mercado.dono)
     def encerra_sistema(self):
         exit(0)
 
