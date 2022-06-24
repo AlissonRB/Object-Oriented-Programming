@@ -25,6 +25,6 @@ class TelaSistema(TelaAbstrata):
         print("2 - Usuarios")
         print("3 - Supermercados")
         print("4 - Categoria")
-        print("0 - Encerrar")
+        print("0 - Voltar Para Tela Inicial")
         opcao = self.le_numero_inteiro('Escolha sua opcao: ', [1, 2,3,4,0])
         return opcao

@@ -30,22 +30,28 @@ class TelaUsuario(TelaAbstrata):
 
     def telaopcoes(self):
         print("------Tela Usuarios------")
+        print("1 - Fazer Cadastro Pessoa Fisica")
+        print("2 - Fazer Cadastro Pessoa Juridica")
+        print("3 - Alterar Dados Pessoa Fisica")
+        print("4 - Alterar Dados Pessoa Juridica")
+        print("5 - Excluir Conta Fisica")
+        print("6 - Excluir Conta Juridica")
+        print("7 - Listar Conta Fisica")
+        print("8 - Listar Conta Juridica")
+        print("9 - Deslogar")
+        print("0 - Voltar")
+        opcao = self.le_numero_inteiro("Escolha sua opcao: ", [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
+        return opcao
+
+    def tela_inicial(self):
+        print("------Tela Inicial------")
         print("1 - Fazer Login Pessoa Fisica")
         print("2 - Fazer Login Pessoa Juridica")
         print("3 - Fazer Cadastro Pessoa Fisica")
         print("4 - Fazer Cadastro Pessoa Juridica")
-        print("5 - Alterar Dados Pessoa Fisica")
-        print("6 - Alterar Dados Pessoa Juridica")
-        print("7 - Excluir Conta Fisica")
-        print("8 - Excluir Conta Juridica")
-        print("9 - Listar Conta Fisica")
-        print("10 - Listar Conta Juridica")
-        print("0 - Voltar")
-        opcao = self.le_numero_inteiro("Escolha sua opcao: ", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0])
+        print("0 - Encerrar Programa")
+        opcao = self.le_numero_inteiro("Escolha sua opcao: ", [1, 2, 3, 4, 0])
         return opcao
-
-    def tela_inicial(self):
-        pass
 
     def pega_dados_conta_juridica(self):
         print("-----Digite os Dados-----")
