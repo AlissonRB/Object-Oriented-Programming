@@ -10,14 +10,6 @@ class ControladorUsuario:
         self.__usuariosjuridicos = {}
         self.__telaUsuario = TelaUsuario()
         self.__controladorSistema = controladorSistema
-        #usuarios cadastrados apenas para testes
-        user_juridico = UsuarioJuridico("joao", "joao@", "123")
-        user_juridico2 = UsuarioJuridico("beto", "beto@", "444")
-        user_fisico = UsuarioFisico("Maria", "maria@", "567")
-        self.__usuariosjuridicos["joao@"] = user_juridico
-        self.__usuariosjuridicos["beto@"] = user_juridico2
-        self.__usuariosfisicos["maria@"] = user_fisico
-
 
     @property
     def usuariosfisicos(self):
@@ -52,7 +44,7 @@ class ControladorUsuario:
             if usuario == email:
                 return self.__usuariosfisicos[usuario]
         return None
-    
+
     def retorna_usuario_juridico(self, email: str):
         for usuario in self.__usuariosjuridicos:
             if usuario == email:
@@ -64,6 +56,7 @@ class ControladorUsuario:
         if typed["email"] in self.__usuariosfisicos:
             if self.__usuariosfisicos[typed["email"]].cpf == typed["cpf"]:
                 self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
+                self.__controladorSistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
                 self.__controladorSistema.abre_tela()
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
@@ -75,6 +68,7 @@ class ControladorUsuario:
         if typed["email"] in self.__usuariosjuridicos:
             if self.__usuariosjuridicos[typed["email"]].cnpj == typed["cnpj"]:
                 self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
+                self.__controladorSistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
                 self.__controladorSistema.abre_tela()
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
@@ -175,14 +169,30 @@ class ControladorUsuario:
     def retornar(self):
         self.__controladorSistema.abre_tela()
 
+    def encerra_sistema(self):
+        exit(0)
+
+
+    def deslogar(self):
+        self.__controladorSistema.usuario_logado = None
+        self.abretela_inicial()
+
     def abretela(self):
-        lista_opcoes = {1: self.realizaloginfisico, 2: self.realizaloginjuridico, 3: self.cadastrar_pessoa_fisica,
-                        4: self.cadastrar_pessoa_juridica, 5: self.alterar_conta_fisica, 6: self.alterar_conta_juridica,
-                        7: self.excluir_conta_fisica, 8: self.excluir_conta_juridica, 9: self.listar_usuario_fisico,
-                        10: self.listar_usuario_juridico,
-                        0: self.retornar}
+        lista_opcoes = {1: self.cadastrar_pessoa_fisica,
+                        2: self.cadastrar_pessoa_juridica, 3: self.alterar_conta_fisica, 4: self.alterar_conta_juridica,
+                        5: self.excluir_conta_fisica, 6: self.excluir_conta_juridica, 7: self.listar_usuario_fisico,
+                        8: self.listar_usuario_juridico, 9: self.deslogar, 0: self.retornar}
 
         while True:
             opcao_escolhida = self.__telaUsuario.telaopcoes()
+            funcao_escolhida = lista_opcoes[opcao_escolhida]
+            funcao_escolhida()
+
+    def abretela_inicial(self):
+        lista_opcoes = {1: self.realizaloginfisico, 2: self.realizaloginjuridico, 3: self.cadastrar_pessoa_fisica,
+                        4: self.cadastrar_pessoa_juridica, 0: self.encerra_sistema}
+
+        while True:
+            opcao_escolhida = self.__telaUsuario.tela_inicial()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()

@@ -11,7 +11,7 @@ from limite.telaSistema import TelaSistema
 class ControladorSistema:
 
     def __init__(self):
-        self.__usuario_logado = None #associar o usuario que fez o login com esse atributo
+        self.__usuario_logado = None  # associar o usuario que fez o login com esse atributo
         self.__controlador_produto = ControladorProduto(self)
         self.__controlador_categoria = ControladorCategoria(self)
         self.__controlador_preco = ControladorPreco(self)
@@ -27,7 +27,7 @@ class ControladorSistema:
     @property
     def controlador_categoria(self):
         return self.__controlador_categoria
-    
+
     @property
     def controlador_preco(self):
         return self.__controlador_preco
@@ -35,25 +35,25 @@ class ControladorSistema:
     @property
     def controlador_qualificador(self):
         return self.__controlador_qualificador
-    
+
     @property
     def controladorMercado(self):
         return self.__controladorMercado
-    
+
     @property
     def controladorUsuario(self):
         return self.__controladorUsuario
-    
+
     @property
     def usuario_logado(self):
         return self.__usuario_logado
-    
+
     @usuario_logado.setter
     def usuario_logado(self, usuario_logado):
         self.__usuario_logado = usuario_logado
 
     def inicializa_sistema(self):
-        self.abre_tela()
+        self.controladorUsuario.abretela_inicial()
 
     def pesquisa_produto(self):
         pass
@@ -69,17 +69,16 @@ class ControladorSistema:
 
     def chama_categoria(self):
         self.__controlador_categoria.abre_tela()
-    
+
     def cria_dono(self):
         return self.__controladorUsuario.verifica_usuario_juridico()
 
-
-    def encerra_sistema(self):
-        exit(0)
+    def voltar(self):
+        self.__controladorUsuario.abretela_inicial()
 
     def abre_tela(self):
         lista_opcoes = {1: self.chama_produtos, 2: self.chama_usuario, 3: self.chama_supermercado,
-                        4: self.chama_categoria, 0: self.encerra_sistema,}
+                        4: self.chama_categoria, 0: self.voltar, }
 
         while True:
             opcoes = self.__tela_sistema.telaopcoes()
