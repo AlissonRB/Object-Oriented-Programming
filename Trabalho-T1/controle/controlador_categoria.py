@@ -8,8 +8,8 @@ class ControladorCategoria:
         self.__lista_categorias = []
         self.__tela_categoria = TelaCategoria()
         #categoria cadastrada apenas para teste
-        nova = Categoria("frios", 123)
-        self.__lista_categorias.append(nova)
+        self.nova = Categoria("frios", 123)
+        self.__lista_categorias.append(self.nova)
     
     def cadastrar_categoria(self):
         existe = False
@@ -24,7 +24,7 @@ class ControladorCategoria:
                 self.__lista_categorias.append(nova_categoria)
                 self.__tela_categoria.mostra_msg("Categoria cadastrado com sucesso!")
             else:
-                self.__tela_categoria.mostra_msg("O codigo já está cadastrado!") #refazer
+                self.__tela_categoria.mostra_msg("O codigo já está cadastrado!")
         else:
             self.__tela_categoria.mostra_msg("Categoria já cadastrada!")
 
@@ -32,7 +32,7 @@ class ControladorCategoria:
         existe  = False
         while True:
             codigo = randint(0, 500)
-            for produto in self.__lista_produtos:
+            for produto in self.__lista_categorias:
                 if codigo == produto.codigo:
                     existe = True
             break
@@ -43,7 +43,7 @@ class ControladorCategoria:
 
     def listar_categoria(self):
         for categoria in self.__lista_categorias:
-            self.__tela_categoria.lista_categoria({"categoria": categoria.descricao, "codigo": categoria.codigo})  #REVER SE É ASSIM MESMO
+            self.__tela_categoria.lista_categoria({"categoria": categoria.descricao, "codigo": categoria.codigo})
     
     def pega_categoria_por_codigo(self, codigo: int):  #acho que não estou usando essa função mais
         for categoria in self.__lista_categorias:
@@ -53,7 +53,7 @@ class ControladorCategoria:
 
     def pega_codigo(self):
         opcoes = []
-        for categoria in self.__lista_categorias:  #serase
+        for categoria in self.__lista_categorias:
             opcoes.append(categoria.codigo)
         codigo = self.__tela_categoria.pega_codigo("Digite o código da categoria",opcoes)
         for categoria in self.__lista_categorias:
@@ -62,6 +62,12 @@ class ControladorCategoria:
 
     def retornar(self):
         self.__controlador_sistema.abre_tela()
+    
+    def alterar_categoria(self):
+        pass
+
+    def excluir_categoria(self):
+        pass
 
     def abre_tela(self):
         opcoes = {1: self.cadastrar_categoria, 2: self.alterar_categoria, 3: self.excluir_categoria, 

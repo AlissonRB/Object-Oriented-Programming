@@ -12,12 +12,13 @@ class ControladorSistema:
 
     def __init__(self):
         self.__usuario_logado = None  # associar o usuario que fez o login com esse atributo
-        self.__controlador_produto = ControladorProduto(self)
+        
         self.__controlador_categoria = ControladorCategoria(self)
         self.__controlador_preco = ControladorPreco(self)
         self.__controlador_qualificador = ControladorQualificador(self)
-        self.__controladorMercado = ControladorMercado(self)
         self.__controladorUsuario = ControladorUsuario(self)
+        self.__controladorMercado = ControladorMercado(self)
+        self.__controlador_produto = ControladorProduto(self)
         self.__tela_sistema = TelaSistema()
 
     @property
@@ -55,10 +56,8 @@ class ControladorSistema:
     def inicializa_sistema(self):
         self.controladorUsuario.abretela_inicial()
 
-    def pesquisa_produto(self):
-        pass
-
     def chama_produtos(self):
+        self.__controlador_produto.usuario = self.__usuario_logado
         self.__controlador_produto.abre_tela()
 
     def chama_usuario(self):
