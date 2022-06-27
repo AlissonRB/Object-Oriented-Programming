@@ -7,9 +7,6 @@ class ControladorCategoria:
         self.__controlador_sistema = controlador_sistema
         self.__lista_categorias = []
         self.__tela_categoria = TelaCategoria()
-        #categoria cadastrada apenas para teste
-        self.nova = Categoria("frios", 123)
-        self.__lista_categorias.append(self.nova)
     
     def cadastrar_categoria(self):
         existe = False

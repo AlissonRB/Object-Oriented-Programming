@@ -7,10 +7,6 @@ class ControladorMercado:
         self.__lista_supermercados = {}
         self.__telaSupermercado = TelaSupermercado()
         self.__controladorSistema = controladorSistema
-        #testes
-        dono = self.__controladorSistema.controladorUsuario.user_juridico
-        self.mercado1 = Supermercado("abc", "rua", dono)
-        self.__lista_supermercados["abc"] = self.mercado1
 
     @property
     def lista_supermercados(self):
@@ -86,7 +82,7 @@ class ControladorMercado:
         if mercado is not None:
             self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].nome)
             self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].endereco)
-            self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].dono)
+            self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].dono.nome)
         else:
             self.__telaSupermercado.mensagem_pro_usuario("ATENCAO: Mercado não existente")
 

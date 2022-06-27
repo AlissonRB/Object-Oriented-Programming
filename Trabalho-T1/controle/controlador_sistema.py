@@ -69,6 +69,9 @@ class ControladorSistema:
     def cria_dono(self):
         return self.__controladorUsuario.verifica_usuario_juridico()
 
+    def retorna_usuario(self):
+        return self.__usuario_logado
+
     def voltar(self):
         self.__controladorUsuario.abretela_inicial()
 

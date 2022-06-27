@@ -5,18 +5,11 @@ from entidade.usuarioJuridico import UsuarioJuridico
 
 class ControladorUsuario:
 
-    def __init__(self, controladorSistema):
+    def __init__(self, controlador_sistema):
         self.__usuariosfisicos = {}
         self.__usuariosjuridicos = {}
         self.__telaUsuario = TelaUsuario()
-        self.__controladorSistema = controladorSistema
-        #usuarios cadastrados apenas para testes
-        self.user_juridico = UsuarioJuridico("joao", "joao@", "123")
-        self.user_juridico2 = UsuarioJuridico("big", "big@", "444")
-        self.user_fisico = UsuarioFisico("Maria", "maria@", "567")
-        self.__usuariosjuridicos["joao@"] = self.user_juridico
-        self.__usuariosjuridicos["big@"] = self.user_juridico2
-        self.__usuariosfisicos["maria@"] = self.user_fisico
+        self.__controlador_sistema = controlador_sistema
 
     @property
     def usuariosfisicos(self):
@@ -63,8 +56,8 @@ class ControladorUsuario:
         if typed["email"] in self.__usuariosfisicos:
             if self.__usuariosfisicos[typed["email"]].cpf == typed["cpf"]:
                 self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
-                self.__controladorSistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
-                self.__controladorSistema.abre_tela()
+                self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
+                self.__controlador_sistema.abre_tela()
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
         else:
@@ -75,8 +68,8 @@ class ControladorUsuario:
         if typed["email"] in self.__usuariosjuridicos:
             if self.__usuariosjuridicos[typed["email"]].cnpj == typed["cnpj"]:
                 self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
-                self.__controladorSistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
-                self.__controladorSistema.abre_tela()
+                self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+                self.__controlador_sistema.abre_tela()
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
         else:
@@ -88,7 +81,8 @@ class ControladorUsuario:
         if typed["email"] not in self.__usuariosjuridicos and typed["cnpj"] not in self.__usuariosjuridicos:
             self.__usuariosjuridicos[typed["email"]] = pessoa_juridica
             self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-            self.__controladorSistema.abre_tela()
+            self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+            self.__controlador_sistema.abre_tela()
         else:
             self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
 
@@ -98,7 +92,8 @@ class ControladorUsuario:
         if typed["email"] not in self.__usuariosfisicos and typed["cpf"] not in self.__usuariosfisicos:
             self.__usuariosfisicos[typed["email"]] = pessoa_fisica
             self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-            self.__controladorSistema.abre_tela()
+            self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+            self.__controlador_sistema.abre_tela()
         else:
             self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
 
@@ -174,14 +169,14 @@ class ControladorUsuario:
             self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
 
     def retornar(self):
-        self.__controladorSistema.abre_tela()
+        self.__controlador_sistema.abre_tela()
 
     def encerra_sistema(self):
         exit(0)
 
 
     def deslogar(self):
-        self.__controladorSistema.usuario_logado = None
+        self.__controlador_sistema.usuario_logado = None
         self.abretela_inicial()
 
     def abretela(self):
