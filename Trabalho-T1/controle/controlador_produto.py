@@ -14,6 +14,7 @@ class ControladorProduto:
         self.__tela_produto = TelaProduto()
         self.__lista_produtos = []
         self.__usuario = None
+        self.__usuarios_tempo = {}
         #produto cadastrado para teste
         supermer = self.__controlador_sistema.controladorMercado.mercado1
         cate = self.__controlador_sistema.controlador_categoria.nova
@@ -31,6 +32,14 @@ class ControladorProduto:
     @usuario.setter
     def usuario(self, usuario):
         self.__usuario = usuario
+
+    @property
+    def usuarios_tempo(self):
+        return self.__usuarios_tempo
+
+    @usuarios_tempo.setter
+    def usuarios_tempo(self, usuarios_tempo):
+        self.__usuarios_tempo = usuarios_tempo
     
     def cadastrar_produto(self):
         pega_dados = self.__tela_produto.pega_dados() #pega nome,descrição e mercado  do produto
@@ -115,6 +124,7 @@ class ControladorProduto:
         #Um usuário somente poderá atualizar/cadastrar o preço de um determinado produto uma vez por dia.
         mercado = self.__tela_produto.pega_nome("Nome do mercado: ") #seleciona o supermercado
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(mercado)
+        dia = timedelta(days=1)
         if (supermercado is not None) and isinstance(supermercado,Supermercado):
             verificar = self.verifica_supermercado(supermercado)
             if verificar == True:
@@ -124,11 +134,22 @@ class ControladorProduto:
                 qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
                 pega_produto = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
                 if (pega_produto is not None) and isinstance(pega_produto, Produto):
-                    novo_preco = self.__tela_produto.pega_preço()
-                    pega_produto.add_preco(novo_preco) #confirma ou adiciona  talaez retornar uma msg
-                    self.adicionar_registro(pega_produto, novo_preco, "inclusão")
-                    
-                    self.__tela_produto.mensagem_pro_usuario("Novo preço de "+ str(novo_preco)+ " lançado") 
+                    if pega_produto.usuario not in self.__usuarios_tempo:
+                        novo_preco = self.__tela_produto.pega_preço()
+                        pega_produto.add_preco(novo_preco)  # confirma ou adiciona  talaez retornar uma msg
+                        self.adicionar_registro(pega_produto, novo_preco, "inclusão")
+                        self.__tela_produto.mensagem_pro_usuario("Novo preço de " + str(novo_preco) + " lançado")
+                        self.__usuarios_tempo[pega_produto.usuario] = datetime.date.today()
+                    else:
+                        if (datetime.date.today() - self.usuarios_tempo[pega_produto.usuario]) >= dia:
+                            novo_preco = self.__tela_produto.pega_preço()
+                            pega_produto.add_preco(novo_preco)  # confirma ou adiciona  talaez retornar uma msg
+                            self.adicionar_registro(pega_produto, novo_preco, "inclusão")
+                            self.__tela_produto.mensagem_pro_usuario("Novo preço de " + str(novo_preco) + " lançado")
+                            self.__usuarios_tempo[pega_produto.usuario] = datetime.date.today()
+                        else:
+                            self.__tela_produto.mensagem_pro_usuario("Voce deve esperar um dia para poder alterar novamente o preco de um produto")
+
                 else:
                     self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
             else:
