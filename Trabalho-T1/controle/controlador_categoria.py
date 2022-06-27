@@ -74,7 +74,7 @@ class ControladorCategoria:
                     4: self.listar_categoria, 0: self.retornar}
 
         while True:
-            opcao = self.__tela_categoria.tela_opcoes()
+            opcao = self.__tela_categoria.telaopcoes()
             funcao_escolhida = opcoes[opcao]
             funcao_escolhida()
 

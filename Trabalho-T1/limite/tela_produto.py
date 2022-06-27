@@ -3,7 +3,7 @@ from limite.telaAbstrata import TelaAbstrata
 
 class TelaProduto(TelaAbstrata):
     #fazer tratamento de excessoes
-    def tela_opcoes(self):
+    def telaopcoes(self):
         print("-------- Produtos ----------")
         print("1 - incluir Produto")
         print("2 - Pesquisar Precos de Produtos")
@@ -13,7 +13,6 @@ class TelaProduto(TelaAbstrata):
         print("6 - Relatórios")
         print("7 - Excluir Preço")
         print("0 - Retornar")
-        # alterar produto talvez
         num_opcao = self.le_numero_inteiro("Escolha a opção:", [1,2,3,4,5,6,7,0])
         return num_opcao
 
@@ -73,10 +72,8 @@ class TelaProduto(TelaAbstrata):
         print("-----------------------------")
 
     def evolucao_precos(self,info):
-        print(info[""])
-        print(info[""])
-        print(info[""])
-    
+        pass
+
     def mostra_registros(self, dados_registro):
         print(dados_registro["data"], dados_registro["operacao"], dados_registro["valor"])
         print("\n")
@@ -90,9 +87,6 @@ class TelaProduto(TelaAbstrata):
         print("0 - Voltar ")
         opcao = self.le_numero_inteiro("Selecione uma opção", [1, 2 , 3, 0])
         return opcao
-    
-    def telaopcoes(self):
-        pass
 
     def pega_inteiro(self, msg):
         while True:

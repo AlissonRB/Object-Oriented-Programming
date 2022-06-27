@@ -16,12 +16,14 @@ class TelaCategoria(TelaAbstrata):
                 if inteiros_validos:
                     print("Valores validos:", inteiros_validos)
 
-    def tela_opcoes(self):
+    def telaopcoes(self):
         print("-------- Categoria ----------")
         print("1 - Incluir Categoria")
-        print("2 - Listar Categorias ")
+        print("2 - Alterar Categorias ")
+        print("3 - Excluir Categorias ")
+        print("4 - Listar Categorias ")
         print("0 - Retornar")
-        num_opcao = self.le_numero_inteiro("Escolha a opção: ",[1,2,0])
+        num_opcao = self.le_numero_inteiro("Escolha a opção: ",[1,2,3,4,0])
         return num_opcao
 
     def pega_dados(self):
@@ -38,6 +40,3 @@ class TelaCategoria(TelaAbstrata):
     
     def mostra_msg(self, msg):
         print(msg)
-    
-    def telaopcoes(self):
-        pass

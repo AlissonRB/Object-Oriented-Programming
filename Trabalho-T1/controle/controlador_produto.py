@@ -3,6 +3,8 @@ from limite.tela_produto import TelaProduto
 from entidade.categoria import Categoria
 from entidade.supermercado import Supermercado
 from entidade.produto import Produto
+from entidade.usuarioFisico import UsuarioFisico
+from entidade.usuarioJuridico import UsuarioJuridico
 from random import randint
 import datetime
 
@@ -32,31 +34,43 @@ class ControladorProduto:
     
     def cadastrar_produto(self):
         pega_dados = self.__tela_produto.pega_dados() #pega nome,descrição e mercado  do produto
-        print(pega_dados["preco"]) #verificação
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(pega_dados["mercado"])
         if (supermercado is not None) and isinstance(supermercado,Supermercado):
-            self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
-            categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
-            if (categoria is not None) and isinstance(categoria, Categoria):
-                if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], float): #rever
-                    qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
-                    produto_existe = self.verifica_duplicidade_produto(pega_dados["nome_produto"],categoria, supermercado, qualificadores)
-                    if produto_existe == None:
-                        codigo = self.gerar_codigo()
-                        novo_produto = Produto(pega_dados["nome_produto"], pega_dados["descricao"], codigo, supermercado, categoria, qualificadores, self.__usuario)
-                        novo_produto.add_preco(pega_dados["preco"])
-                        self.__lista_produtos.append(novo_produto)
-                        self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
-                        self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
+            verificar = self.verifica_supermercado(supermercado)
+            if verificar == True:
+                self.__controlador_sistema.controlador_categoria.listar_categoria() # lista as categorias
+                categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # pega a categoria
+                if (categoria is not None) and isinstance(categoria, Categoria):
+                    if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], float): #rever
+                        qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
+                        produto_existe = self.verifica_duplicidade_produto(pega_dados["nome_produto"],categoria, supermercado, qualificadores)
+                        if produto_existe == None:
+                            codigo = self.gerar_codigo()
+                            novo_produto = Produto(pega_dados["nome_produto"], pega_dados["descricao"], codigo, supermercado, categoria, qualificadores, self.__usuario)
+                            novo_produto.add_preco(pega_dados["preco"])
+                            self.__lista_produtos.append(novo_produto)
+                            self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
+                            self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
+                        else:
+                            self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
                     else:
-                        self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
+                        self.__tela_produto.mensagem_pro_usuario("Valor do preço não aceito")
                 else:
-                    self.__tela_produto.mensagem_pro_usuario("Valor do preço não aceito")
+                    self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
             else:
-                self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
+                    self.__tela_produto.mensagem_pro_usuario("Usuario Juridico não pode alterar em outros supermercados")
         else:
             self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
-    
+
+    def verifica_supermercado(self, supermercado): # verifica se o supermercado está associado a conta de usuario juridico
+        verificar = False
+        if isinstance(self.__usuario,UsuarioFisico):
+            verificar = True
+        if isinstance(self.__usuario, UsuarioJuridico):
+            if supermercado.dono == self.__usuario.email:
+                verificar = True
+        return verificar
+
     def verifica_duplicidade_produto(self,nome, categoria, supermercado, qualificadores): #revisar
         for produto in self.__lista_produtos:
             if produto.nome == nome:
@@ -102,19 +116,23 @@ class ControladorProduto:
         mercado = self.__tela_produto.pega_nome("Nome do mercado: ") #seleciona o supermercado
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(mercado)
         if (supermercado is not None) and isinstance(supermercado,Supermercado):
-            self.__controlador_sistema.controlador_categoria.listar_categoria() #lista as categorias
-            categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # #seleciona a categoria
-            nome_produto = self.__tela_produto.pega_nome("Nome do produto: ") #seleciona o nome do produto
-            qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
-            pega_produto = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
-            if (pega_produto is not None) and isinstance(pega_produto, Produto):
-                novo_preco = self.__tela_produto.pega_preço()
-                pega_produto.add_preco(novo_preco) #confirma ou adiciona  talaez retornar uma msg
-                self.adicionar_registro(pega_produto, novo_preco, "inclusão")
-                
-                self.__tela_produto.mensagem_pro_usuario("Novo preço de "+ str(novo_preco)+ " lançado") 
+            verificar = self.verifica_supermercado(supermercado)
+            if verificar == True:
+                self.__controlador_sistema.controlador_categoria.listar_categoria() #lista as categorias
+                categoria = self.__controlador_sistema.controlador_categoria.pega_codigo() # #seleciona a categoria
+                nome_produto = self.__tela_produto.pega_nome("Nome do produto: ") #seleciona o nome do produto
+                qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador() # adicina uma lista de qualificadores
+                pega_produto = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
+                if (pega_produto is not None) and isinstance(pega_produto, Produto):
+                    novo_preco = self.__tela_produto.pega_preço()
+                    pega_produto.add_preco(novo_preco) #confirma ou adiciona  talaez retornar uma msg
+                    self.adicionar_registro(pega_produto, novo_preco, "inclusão")
+                    
+                    self.__tela_produto.mensagem_pro_usuario("Novo preço de "+ str(novo_preco)+ " lançado") 
+                else:
+                    self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
             else:
-                self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
+                self.__tela_produto.mensagem_pro_usuario("Usuario Juridico não pode alterar em outros supermercados")
         else:
             self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
     
@@ -237,6 +255,6 @@ class ControladorProduto:
                         5: self.registros_de_um_produto, 6: self.relatorio,7: self.excluir_preco, 0: self.retornar}
 
         while True:
-            opcoes = self.__tela_produto.tela_opcoes()
+            opcoes = self.__tela_produto.telaopcoes()
             funcao_escolhida = lista_opcoes[opcoes]
             funcao_escolhida()

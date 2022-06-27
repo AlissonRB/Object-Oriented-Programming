@@ -1,6 +1,5 @@
 from controle.controlador_produto import ControladorProduto
 from controle.controlador_categoria import ControladorCategoria
-from controle.controlador_preco import ControladorPreco
 from controle.controlador_qualificador import ControladorQualificador
 from controle.controladorMercado import ControladorMercado
 from controle.controladorUsuario import ControladorUsuario
@@ -12,9 +11,7 @@ class ControladorSistema:
 
     def __init__(self):
         self.__usuario_logado = None  # associar o usuario que fez o login com esse atributo
-        
         self.__controlador_categoria = ControladorCategoria(self)
-        self.__controlador_preco = ControladorPreco(self)
         self.__controlador_qualificador = ControladorQualificador(self)
         self.__controladorUsuario = ControladorUsuario(self)
         self.__controladorMercado = ControladorMercado(self)
