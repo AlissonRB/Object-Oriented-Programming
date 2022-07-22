@@ -9,7 +9,14 @@ class TelaAbstrata(ABC):
     def telaopcoes(self):
         pass
 
-    @abstractmethod
-    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos: [] = None):
-        pass
-
+ #    @abstractmethod
+ #    def open(self):
+ #        pass
+ #
+ #    @abstractmethod
+ #    def close(self):
+ #        pass
+ #
+ #    @abstractmethod
+ #    def mensagem_pro_usuario(self, mensagem: str):
+ #        pass

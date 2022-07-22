@@ -1,30 +1,43 @@
 from limite.telaAbstrata import TelaAbstrata
+import PySimpleGUI as sg
 
 
 class TelaSistema(TelaAbstrata):
     def __init__(self):
         super().__init__()
 
-    def le_numero_inteiro(self, mensagem, inteiros_validos):
-        while True:
-            valor_lido = input(mensagem)
-            try:
-                inteiro = int(valor_lido)
-                if inteiros_validos and inteiro not in inteiros_validos:
-                    raise ValueError
-                return inteiro
-            except ValueError:
-                print("Valor Incorreto, Digite um Valor Valido")
-                if inteiros_validos:
-                    print("Valores Validos: ", inteiros_validos)
-
     def telaopcoes(self):
-        print("------Escolha De Telas------")
-        print("Escolha a opcao")
-        print("1 - Produtos")
-        print("2 - Usuarios")
-        print("3 - Supermercados")
-        print("4 - Categoria")
-        print("0 - Voltar Para Tela Inicial")
-        opcao = self.le_numero_inteiro('Escolha sua opcao: ', [1, 2,3,4,0])
+        self.init_tela_opcoes()
+        button, values = self.open()
+        if values['1']:
+            opcao = 1
+        if values['2']:
+            opcao = 2
+        if values['3']:
+            opcao = 3
+        if values['4']:
+            opcao = 4
+        if button in (None, 'Voltar'):
+            opcao = 0
+        self.close()
         return opcao
+
+    def init_tela_opcoes(self):
+        sg.theme('DarkTeal4')
+        layout = [
+            [sg.Text('-------- Tela Usuarios ----------', font=("Helvica", 25))],
+            [sg.Text('Escolha sua opção', font=("Helvica", 15))],
+            [sg.Radio('Produtos', "RD1", key='1')],
+            [sg.Radio("Usuarios", "RD1", key='2')],
+            [sg.Radio("Supermercados", "RD1", key='3')],
+            [sg.Radio("Categoria", "RD1", key='4')],
+            [sg.Button('Confirmar'), sg.Cancel('Voltar')]
+                  ]
+        self.__window = sg.Window('Window Title').Layout(layout)
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+
+    def close(self):
+        self.__window.Close()

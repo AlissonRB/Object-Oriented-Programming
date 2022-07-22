@@ -53,49 +53,61 @@ class ControladorUsuario:
 
     def realizaloginfisico(self):
         typed = self.__telaUsuario.tela_login_fisica()
-        if typed["email"] in self.__usuariosfisicos:
-            if self.__usuariosfisicos[typed["email"]].cpf == typed["cpf"]:
-                self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
-                self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
-                self.__controlador_sistema.abre_tela()
+        if typed == None:
+            pass
+        else:
+            if typed["email"] in self.__usuariosfisicos:
+                if self.__usuariosfisicos[typed["email"]].cpf == typed["cpf"]:
+                    self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
+                    self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
+                    self.__controlador_sistema.abre_tela()
+                else:
+                    self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
 
     def realizaloginjuridico(self):
         typed = self.__telaUsuario.tela_login_juridica()
-        if typed["email"] in self.__usuariosjuridicos:
-            if self.__usuariosjuridicos[typed["email"]].cnpj == typed["cnpj"]:
-                self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
-                self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
-                self.__controlador_sistema.abre_tela()
+        if typed == None:
+            pass
+        else:
+            if typed["email"] in self.__usuariosjuridicos:
+                if self.__usuariosjuridicos[typed["email"]].cnpj == typed["cnpj"]:
+                    self.__telaUsuario.mensagem_pro_usuario("Seja bem vindo!")
+                    self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+                    self.__controlador_sistema.abre_tela()
+                else:
+                    self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
             else:
                 self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("Informações de login incorretas!")
 
     def cadastrar_pessoa_juridica(self):
         typed = self.__telaUsuario.pega_dados_conta_juridica()
-        pessoa_juridica = UsuarioJuridico(typed["nome"], typed["email"], typed["cnpj"])
-        if typed["email"] not in self.__usuariosjuridicos and typed["cnpj"] not in self.__usuariosjuridicos:
-            self.__usuariosjuridicos[typed["email"]] = pessoa_juridica
-            self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-            self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
-            self.__controlador_sistema.abre_tela()
+        if typed == None:
+            pass
         else:
-            self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
+            pessoa_juridica = UsuarioJuridico(typed["nome"], typed["email"], typed["cnpj"])
+            if typed["email"] not in self.__usuariosjuridicos and typed["cnpj"] not in self.__usuariosjuridicos:
+                self.__usuariosjuridicos[typed["email"]] = pessoa_juridica
+                self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
+                self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+                self.__controlador_sistema.abre_tela()
+            else:
+                self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
 
     def cadastrar_pessoa_fisica(self):
         typed = self.__telaUsuario.pega_dados_conta_fisica()
-        pessoa_fisica = UsuarioFisico(typed["nome"], typed["email"], typed["cpf"])
-        if typed["email"] not in self.__usuariosfisicos and typed["cpf"] not in self.__usuariosfisicos:
-            self.__usuariosfisicos[typed["email"]] = pessoa_fisica
-            self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-            self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
-            self.__controlador_sistema.abre_tela()
+        if typed == None:
+            pass
         else:
-            self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
+            pessoa_fisica = UsuarioFisico(typed["nome"], typed["email"], typed["cpf"])
+            if typed["email"] not in self.__usuariosfisicos and typed["cpf"] not in self.__usuariosfisicos:
+                self.__usuariosfisicos[typed["email"]] = pessoa_fisica
+                self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
+                self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
+                self.__controlador_sistema.abre_tela()
+            else:
+                self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
 
     def alterar_conta_fisica(self):
         typed = self.__telaUsuario.seleciona_usuario()
@@ -174,7 +186,6 @@ class ControladorUsuario:
     def encerra_sistema(self):
         exit(0)
 
-
     def deslogar(self):
         self.__controlador_sistema.usuario_logado = None
         self.abretela_inicial()
@@ -195,6 +206,6 @@ class ControladorUsuario:
                         4: self.cadastrar_pessoa_juridica, 0: self.encerra_sistema}
 
         while True:
-            opcao_escolhida = self.__telaUsuario.tela_inicial()
+            opcao_escolhida = self.__telaUsuario.tela_inicial_opcoes()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
             funcao_escolhida()
