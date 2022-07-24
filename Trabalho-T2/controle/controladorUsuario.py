@@ -164,9 +164,9 @@ class ControladorUsuario:
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usario_fisico(typed["email"])
         if usuario is not None:
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosfisicos[usuario].nome)
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosfisicos[usuario].email)
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosfisicos[usuario].cpf)
+            self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosfisicos[usuario].nome} "
+                                                    f"{self.__usuariosfisicos[usuario].email}"
+                                                    f" {self.__usuariosfisicos[usuario].cpf}")
         else:
             self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
 
@@ -174,9 +174,9 @@ class ControladorUsuario:
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usuario_juridico(typed["email"])
         if usuario is not None:
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosjuridicos[usuario].nome)
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosjuridicos[usuario].email)
-            self.__telaUsuario.mensagem_pro_usuario(self.__usuariosjuridicos[usuario].cnpj)
+            self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosfisicos[usuario].nome} "
+                                                    f"{self.__usuariosfisicos[usuario].email}"
+                                                    f" {self.__usuariosfisicos[usuario].cnpj}")
         else:
             self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
 

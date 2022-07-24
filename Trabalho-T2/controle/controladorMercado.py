@@ -80,9 +80,9 @@ class ControladorMercado:
         typed = self.__telaSupermercado.seleciona_mercado()
         mercado = self.pega_supermercado(typed["nome"])
         if mercado is not None:
-            self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].nome)
-            self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].endereco)
-            self.__telaSupermercado.mensagem_pro_usuario(self.__lista_supermercados[mercado].dono.nome)
+            self.__telaSupermercado.mensagem_pro_usuario(f"{self.__lista_supermercados[mercado].nome}"
+                                                         f" {self.__lista_supermercados[mercado].endereco}"
+                                                         f" {self.__lista_supermercados[mercado].dono}")
         else:
             self.__telaSupermercado.mensagem_pro_usuario("ATENCAO: Mercado não existente")
 
