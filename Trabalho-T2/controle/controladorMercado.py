@@ -26,6 +26,12 @@ class ControladorMercado:
         for mercado in self.__lista_supermercados:
             if mercado == nome:
                 return self.__lista_supermercados[mercado]
+    
+    def retorna_nomes_mercado(self):
+        nomes = []
+        for mercado in self.__lista_supermercados:
+            nomes.append(mercado)
+        return nomes
 
     def cadastrar_supermercado(self):
         typed = self.__telaSupermercado.pega_dados_supermercado()
