@@ -8,14 +8,13 @@ from entidade.usuarioJuridico import UsuarioJuridico
 from random import randint
 import datetime
 from datetime import timedelta
-from DAOs.produtos_dao import ProdutoDAO
 
 
 class ControladorProduto:
     def __init__(self, controlador_sistema):
         self.__controlador_sistema = controlador_sistema
         self.__tela_produto = TelaProduto()
-        self.__produto_DAO = ProdutoDAO()
+        self.__lista_produtos = []
         self.__usuarios_tempo = {}
         self.__usuario = None
 
@@ -28,38 +27,36 @@ class ControladorProduto:
         self.__usuario = usuario
 
     def cadastrar_produto(self):
-        descricao_categoria = self.__controlador_sistema.controlador_categoria.retorna_nomes_categorias()
-        descricao_mercado = self.__controlador_sistema.controladorMercado.retorna_nomes_mercado()
-        pega_dados = self.__tela_produto.pega_dados(descricao_categoria, descricao_mercado)  # pega nome,descrição e mercado  do produto
-        if pega_dados is not None:
-            mercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(pega_dados["mercado"])
-            if (mercado is not None) and isinstance(mercado, Supermercado):
-                verificar = self.verifica_supermercado(mercado)
-                if verificar == True:
-                    categoria = self.__controlador_sistema.controlador_categoria.pega_categoria_por_descricao(pega_dados["categoria"])  # pega a categoria
-                    if (categoria is not None) and isinstance(categoria, Categoria):
-                        if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], int):  # rever para flutuante
-                            qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
-                            produto_existe = self.verifica_existencia_produto(pega_dados["nome"], mercado)
-                            if produto_existe == None:
-                                    codigo = self.gerar_codigo()
-                                    novo_produto = Produto(pega_dados["nome"], pega_dados["descricao"], codigo,
-                                                        mercado, categoria, qualificadores, self.__usuario)
-                                    novo_produto.add_preco(pega_dados["preco"])
-                                    self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
-                                    self.__produto_DAO.add(novo_produto)
-                                    self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
-                                    self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
-                            else:
-                                    self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
+        pega_dados = self.__tela_produto.pega_dados()  # pega nome,descrição e mercado  do produto
+        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(pega_dados["mercado"])
+        if (supermercado is not None) and isinstance(supermercado, Supermercado):
+            verificar = self.verifica_supermercado(supermercado)
+            if verificar == True:
+                self.__controlador_sistema.controlador_categoria.listar_categoria()  # lista as categorias
+                categoria = self.__controlador_sistema.controlador_categoria.pega_codigo()  # pega a categoria
+                if (categoria is not None) and isinstance(categoria, Categoria):
+                    if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], float):  # rever
+                        qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
+                        produto_existe = self.verifica_duplicidade_produto(pega_dados["nome_produto"], categoria,
+                                                                           supermercado, qualificadores)
+                        if produto_existe == None:
+                            codigo = self.gerar_codigo()
+                            novo_produto = Produto(pega_dados["nome_produto"], pega_dados["descricao"], codigo,
+                                                   supermercado, categoria, qualificadores, self.__usuario)
+                            novo_produto.add_preco(pega_dados["preco"])
+                            self.__lista_produtos.append(novo_produto)
+                            self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
+                            self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
                         else:
-                            self.__tela_produto.mensagem_pro_usuario("Valor do preço não aceito")
+                            self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
                     else:
-                        self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
+                        self.__tela_produto.mensagem_pro_usuario("Valor do preço não aceito")
                 else:
-                    self.__tela_produto.mensagem_pro_usuario("Usuario Juridico não pode alterar em outros supermercados")
+                    self.__tela_produto.mensagem_pro_usuario("Categoria do produto não encontrada")
             else:
-                self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
+                self.__tela_produto.mensagem_pro_usuario("Usuario Juridico não pode alterar em outros supermercados")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
 
     def verifica_supermercado(self,
                               supermercado):  # verifica se o supermercado está associado a conta de usuario juridico
@@ -67,79 +64,77 @@ class ControladorProduto:
         if isinstance(self.__usuario, UsuarioFisico):
             verificar = True
         if isinstance(self.__usuario, UsuarioJuridico):
-            if supermercado.dono == self.__usuario:
+            if supermercado.dono == self.__usuario.email:
                 verificar = True
         return verificar
 
-    def verifica_existencia_produto(self, nome, supermercado):
-        for produto in self.__produto_DAO.get_all():
+    def verifica_duplicidade_produto(self, nome, categoria, supermercado, qualificadores):  # revisar
+        for produto in self.__lista_produtos:
             if produto.nome == nome:
-                if produto.supermercado.nome == supermercado.nome:
-                    return produto
+                if produto.categoria == categoria:  # categoria.codigo
+                    if produto.supermercado == supermercado:
+                        for qualificador in produto.qualificadores:  # verificar os qualificadores
+                            for novo_qualificador in qualificadores:
+                                if qualificador.titulo == novo_qualificador.titulo:
+                                    if qualificador.descricao == novo_qualificador.descricao:
+                                        return produto
         return None
 
     def pega_produto_por_codigo(self, codigo: int):
-        for produto in self.__produto_DAO.get_all():
+        for produto in self.__lista_produtos:
             if (produto.codigo == codigo):
                 return produto
         return None
 
     def pesquisar_preco(self):
-        info = []
         # buscar pelo nome do produto com ou sem qualificadores
         # ordenar os resultados por preço, número de confirmações ou por data de postagem.
-        nome_produto = self.__tela_produto.pesquisar_preco()
-        if nome_produto is not None:
-            if isinstance(nome_produto['nome'], str):
-                for item in self.__produto_DAO.get_all():
-                    if item.nome == nome_produto['nome']:
-                        nome = item.nome
-                        for qualificador in item.qualificadores:
-                            lista = []
-                            quali = qualificador.titulo + ":" + qualificador.descricao
-                            lista.append(quali)
-                        qualificador1 = lista
-                        preco = item.confirmacoes.valor
-                        mercado = item.supermercado.nome
-                        info.append({"nome": nome, "qualificador": qualificador1, "preco": preco, "mercado": mercado})
-                if len(info) == 0:
-                    self.__tela_produto.mensagem_pro_usuario("Nenhum produto encontrado !")
-                else:
+        nome_produto = self.__tela_produto.pega_nome("Nome do produto: ")
+        if (nome_produto is not None) and isinstance(nome_produto, str):
+            for item in self.__lista_produtos:
+                if item.nome == nome_produto:
+                    nome = item.nome
+                    for qualificador in item.qualificadores:
+                        lista = []
+                        quali = qualificador.titulo + ":" + qualificador.descricao
+                        lista.append(quali)
+                    qualificador1 = lista
+                    preco = item.confirmacoes.valor
+                    mercado = item.supermercado.nome
+                    info = {"nome": nome, "qualificador": qualificador1, "preco": preco, "mercado": mercado}
                     self.__tela_produto.mostra_resultados_busca(info)
-            else:
-                self.__tela_produto.mensagem_pro_usuario("Nome do produto não é válido!")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Nome do produto não é válido!")
 
-    def lancar_preco(self):  #aqui é o codigo final
+    def lancar_preco(self):
         # pegar o usuario logado para associar ao produto
         # depois aponta o preço com duas casas decimais, e confirma ou lança novo preço
         # Um usuário somente poderá atualizar/cadastrar o preço de um determinado produto uma vez por dia.
-        descricao_categoria = self.__controlador_sistema.controlador_categoria.retorna_nomes_categorias()
-        descricao_mercado = self.__controlador_sistema.controladorMercado.retorna_nomes_mercado()
-        lancar = self.__tela_produto.lancamento_preco(descricao_categoria, descricao_mercado) #retorna mercado, categoria, nome e preço
-        if lancar is not None:
-            supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(lancar['supermercado'])
-            dia = timedelta(days=1)
-            if (supermercado is not None) and isinstance(supermercado, Supermercado):
-                verificar = self.verifica_supermercado(supermercado)
-                if verificar == True:
-                    categoria = self.__controlador_sistema.controlador_categoria.pega_categoria_por_descricao(lancar["categoria"])  # #seleciona a categoria
-                    nome_produto = lancar['nome']  # seleciona o nome do produto
-                    qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
-                    verificar_produto = self.verifica_existencia_produto(nome_produto, supermercado)
-                    if (verificar_produto is not None) and isinstance(verificar_produto, Produto):
-                        if verificar_produto.usuario not in self.__usuarios_tempo:
-                            verificar_produto.add_preco(lancar['preco'])
-                            self.adicionar_registro(verificar_produto, lancar['preco'], "inclusão")
-                            self.__usuarios_tempo[verificar_produto.usuario] = datetime.date.today()
-                            self.__produto_DAO.update(verificar_produto)
-                            self.__tela_produto.mensagem_pro_usuario('Novo preço lançado com sucesso')
+        mercado = self.__tela_produto.pega_nome("Nome do mercado: ")  # seleciona o supermercado
+        supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(mercado)
+        dia = timedelta(days=1)
+        if (supermercado is not None) and isinstance(supermercado, Supermercado):
+            verificar = self.verifica_supermercado(supermercado)
+            if verificar == True:
+                self.__controlador_sistema.controlador_categoria.listar_categoria()  # lista as categorias
+                categoria = self.__controlador_sistema.controlador_categoria.pega_codigo()  # #seleciona a categoria
+                nome_produto = self.__tela_produto.pega_nome("Nome do produto: ")  # seleciona o nome do produto
+                qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
+                pega_produto = self.verifica_duplicidade_produto(nome_produto, categoria, supermercado, qualificadores)
+                if (pega_produto is not None) and isinstance(pega_produto, Produto):
+                    if pega_produto.usuario not in self.__usuarios_tempo:
+                        novo_preco = self.__tela_produto.pega_preço()
+                        pega_produto.add_preco(novo_preco)  # confirma ou adiciona  talaez retornar uma msg
+                        self.adicionar_registro(pega_produto, novo_preco, "inclusão")
+                        self.__tela_produto.mensagem_pro_usuario("Novo preço de " + str(novo_preco) + " lançado")
+                        self.__usuarios_tempo[pega_produto.usuario] = datetime.date.today()
                     else:
-                        if (datetime.date.today() - self.__usuarios_tempo[verificar_produto.usuario]) >= dia:
+                        if (datetime.date.today() - self.__usuarios_tempo[pega_produto.usuario]) >= dia:
                             novo_preco = self.__tela_produto.pega_preço()
-                            verificar_produto.add_preco(novo_preco)
-                            self.adicionar_registro(verificar_produto, novo_preco, "inclusão")
+                            pega_produto.add_preco(novo_preco)  # confirma ou adiciona  talaez retornar uma msg
+                            self.adicionar_registro(pega_produto, novo_preco, "inclusão")
                             self.__tela_produto.mensagem_pro_usuario("Novo preço de " + str(novo_preco) + " lançado")
-                            self.__usuarios_tempo[verificar_produto.usuario] = datetime.date.today()
+                            self.__usuarios_tempo[pega_produto.usuario] = datetime.date.today()
                         else:
                             self.__tela_produto.mensagem_pro_usuario(
                                 "Voce deve esperar um dia para poder alterar novamente o preco de um produto")
@@ -151,39 +146,30 @@ class ControladorProduto:
             self.__tela_produto.mensagem_pro_usuario("Supermercado não encontrado")
 
     def excluir_produto(self):
-        codigo_produto = self.__tela_produto.pega_inteiro()
-        if codigo_produto is not None:
-            produto = self.pega_produto_por_codigo(str(codigo_produto))
-            if (produto is not None):
-                mercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(produto.supermercado.nome)
-                verificar = self.verifica_supermercado(mercado)
-                if verificar == True:
-                    self.__produto_DAO.remove(produto.codigo)
-                    self.__tela_produto.mensagem_pro_usuario("Produto excluido com sucesso")
-                else:
-                    self.__tela_produto.mensagem_pro_usuario("Usuario Juridico não pode alterar em outros supermercados")
-            else:
-                self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
+        codigo_produto = self.__tela_produto.pega_inteiro("Digite o codigo do produto: ")
+        produto = self.pega_produto_por_codigo(str(codigo_produto))
+        if (produto is not None):
+            self.__lista_produtos.remove(produto)
+            self.__tela_produto.mensagem_pro_usuario("Produto excluido com sucesso")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
 
     def registros_de_um_produto(self):
         # Registros (inclusão, exclusão, alteração e listagem) de preços de produtos
-        info = []
-        codigo_produto = self.__tela_produto.pega_inteiro()
-        if codigo_produto is not None:
-            produto = self.pega_produto_por_codigo(str(codigo_produto))#lista de dicionarios com o mostra resutados de busca
-            if (produto is not None) and isinstance(produto, Produto):
-                for registro in produto.registros:
-                    info.append({"data": registro["data"],
-                                "operacao": registro["operacao"],
-                                "valor": registro["valor"],
-                                "usuario": registro["usuario"]})
-                self.__tela_produto.mostra_registros(info)
-            else:
-                self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
+        codigo_produto = self.__tela_produto.pega_inteiro("Digite o codigo do produto: ")
+        produto = self.pega_produto_por_codigo(str(codigo_produto))
+        if (produto is not None):
+            for registro in produto.registros:
+                self.__tela_produto.mensagem_pro_usuario("Produto: " + produto.nome)
+                self.__tela_produto.mostra_registros({"data": registro["data"],
+                                                      "operacao": registro["operacao"],
+                                                      "valor": registro["valor"]})
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
 
     def adicionar_registro(self, produto, valor, msg):
         data = datetime.date.today()
-        novo_registro = {"data": data, "operacao": msg, "valor": valor, "usuario": self.__usuario.nome}
+        novo_registro = {"data": data, "operacao": msg, "valor": valor}
         produto.registros.append(novo_registro)
 
     def relatorio(self):
@@ -196,20 +182,17 @@ class ControladorProduto:
             funcao_escolhida()
 
     def produtos_por_supermercado(self):
-        lista_produtos = []
-        descricao_mercado = self.__controlador_sistema.controladorMercado.retorna_nomes_mercado() #retorna umalista de nomes de mercado
-        nome_mercado = self.__tela_produto.pega_nome(descricao_mercado)
+        nome_mercado = self.__tela_produto.pega_nome("Nome do Mercado: ")
         supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
         if (supermercado is not None) and isinstance(supermercado, Supermercado):
-            for item in self.__produto_DAO.get_all():
-                    mercado = item.supermercado.nome
-                    nome1 = item.nome
+            for item in self.__lista_produtos:
+                if item.supermercado == supermercado:
+                    nome = item.nome
                     preco = item.confirmacoes.valor
-                    categoria = item.categoria.nome
+                    categoria = item.categoria.descricao
                     codigo = item.codigo
-                    if mercado == supermercado.nome:
-                        lista_produtos.append({"nome": nome1, "preco": preco, "categoria": categoria, "codigo": codigo})
-            self.__tela_produto.produtos_por_mercado(lista_produtos)
+                    info = {"nome": nome, "preco": preco, "categoria": categoria, "codigo": codigo}
+                    self.__tela_produto.produtos_por_mercado(info)
         else:
             self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
 
@@ -227,7 +210,26 @@ class ControladorProduto:
         # info = {"Data": preco.postagem, "Valor": preco.valor}
 
     def excluir_preco(self):
-        pass #retirar
+        # pega o codigo do produto e lista os preços e exclui um deles
+        codigo_produto = self.__tela_produto.pega_inteiro("Digite o codigo do produto: ")
+        produto = self.pega_produto_por_codigo(str(codigo_produto))
+        if (produto is not None):
+            self.__tela_produto.mensagem_pro_usuario("Lista de preços do produto")
+            for preco in produto.lista_precos:
+                valor = str(preco.valor)
+                self.__tela_produto.mensagem_pro_usuario("R$" + valor)
+            preco_excluir = self.__tela_produto.pega_float(
+                "Digite o preço para excluir: ")  # pegar com duas casas decimais
+            if (preco_excluir is not None):
+                for preco1 in produto.lista_precos:
+                    if preco_excluir == preco1.valor:
+                        produto.lista_precos.remove(preco1)
+                        self.adicionar_registro(produto, preco_excluir, "Exclusão")
+                        self.__tela_produto.mensagem_pro_usuario("Preço excluido com sucesso")
+                    else:
+                        self.__tela_produto.mensagem_pro_usuario("Preço não encontrado")
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
 
     def alterar_preco(self):
         # pega o codigo do produto e lista os preços e altera um deles
@@ -235,22 +237,20 @@ class ControladorProduto:
         pass
 
     def listar_precos_de_um_produto(self):
-        info = []
-        codigo_produto = self.__tela_produto.pega_inteiro()
-        if codigo_produto is not None:
-            produto = self.pega_produto_por_codigo(str(codigo_produto))
-            if (produto is not None):
-                for preco in produto.lista_precos:
-                    info.append(preco.valor)
-                self.__tela_produto.precos_produto(produto.nome, info)
-            else:
-                self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
+        codigo_produto = self.__tela_produto.pega_inteiro("Digite o codigo do produto: ")
+        produto = self.pega_produto_por_codigo(str(codigo_produto))
+        if (produto is not None):
+            for preco in produto.lista_precos:
+                valor = str(preco.valor)
+                self.__tela_produto.mensagem_pro_usuario("R$" + valor)
+        else:
+            self.__tela_produto.mensagem_pro_usuario("Produto não encontrado")
 
     def gerar_codigo(self):
         existe = False
         codigo = randint(0, 500)
         codigo = str(codigo)
-        for produto in self.__produto_DAO.get_all():
+        for produto in self.__lista_produtos:
             if codigo == produto.codigo:
                 existe = True
         if existe == False:

@@ -1,6 +1,8 @@
-from limite.telaUsuario import TelaUsuario
+from limite.tela_usuario import TelaUsuario
 from entidade.usuarioFisico import UsuarioFisico
 from entidade.usuarioJuridico import UsuarioJuridico
+from controle.usuario_ja_cadastrado_exception import UsuarioJaCadastradoException
+from controle.usuario_nao_existente_exception import UsuarioNaoExistenteException
 
 
 class ControladorUsuario:
@@ -53,7 +55,7 @@ class ControladorUsuario:
 
     def realizaloginfisico(self):
         typed = self.__telaUsuario.tela_login_fisica()
-        if typed == None:
+        if typed is None:
             pass
         else:
             if typed["email"] in self.__usuariosfisicos:
@@ -68,7 +70,7 @@ class ControladorUsuario:
 
     def realizaloginjuridico(self):
         typed = self.__telaUsuario.tela_login_juridica()
-        if typed == None:
+        if typed is None:
             pass
         else:
             if typed["email"] in self.__usuariosjuridicos:
@@ -83,73 +85,102 @@ class ControladorUsuario:
 
     def cadastrar_pessoa_juridica(self):
         typed = self.__telaUsuario.pega_dados_conta_juridica()
-        if typed == None:
+        if typed is None:
             pass
         else:
-            pessoa_juridica = UsuarioJuridico(typed["nome"], typed["email"], typed["cnpj"])
-            if typed["email"] not in self.__usuariosjuridicos and typed["cnpj"] not in self.__usuariosjuridicos:
-                self.__usuariosjuridicos[typed["email"]] = pessoa_juridica
-                self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-                self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
-                self.__controlador_sistema.abre_tela()
-            else:
-                self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
+            try:
+                pessoa_juridica = UsuarioJuridico(typed["nome"], typed["email"], typed["cnpj"])
+                if typed["email"] not in self.__usuariosjuridicos and typed["cnpj"] not in self.__usuariosjuridicos:
+                    self.__usuariosjuridicos[typed["email"]] = pessoa_juridica
+                    self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
+                    self.__controlador_sistema.usuario_logado = self.__usuariosjuridicos[typed["email"]]
+                    self.__controlador_sistema.abre_tela()
+                else:
+                    raise(UsuarioJaCadastradoException())
+            except UsuarioJaCadastradoException as e:
+                self.__telaUsuario.mensagem_pro_usuario(e)
+
 
     def cadastrar_pessoa_fisica(self):
         typed = self.__telaUsuario.pega_dados_conta_fisica()
-        if typed == None:
+        if typed is None:
             pass
         else:
-            pessoa_fisica = UsuarioFisico(typed["nome"], typed["email"], typed["cpf"])
-            if typed["email"] not in self.__usuariosfisicos and typed["cpf"] not in self.__usuariosfisicos:
-                self.__usuariosfisicos[typed["email"]] = pessoa_fisica
-                self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
-                self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
-                self.__controlador_sistema.abre_tela()
-            else:
-                self.__telaUsuario.mensagem_pro_usuario("Usuario Ja Cadastrado")
+            try:
+                pessoa_fisica = UsuarioFisico(typed["nome"], typed["email"], typed["cpf"])
+                if typed["email"] not in self.__usuariosfisicos and typed["cpf"] not in self.__usuariosfisicos:
+                    self.__usuariosfisicos[typed["email"]] = pessoa_fisica
+                    self.__telaUsuario.mensagem_pro_usuario("Cadastrado Com Sucesso")
+                    self.__controlador_sistema.usuario_logado = self.__usuariosfisicos[typed["email"]]
+                    self.__controlador_sistema.abre_tela()
+                else:
+                    raise(UsuarioJaCadastradoException())
+            except UsuarioJaCadastradoException as e:
+                self.__telaUsuario.mensagem_pro_usuario(e)
 
     def alterar_conta_fisica(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usario_fisico(typed["email"])
-        if usuario is not None:
-            novos_dados_usuario = self.__telaUsuario.pega_dados_conta_fisica()
-            self.__usuariosfisicos[usuario].nome = novos_dados_usuario["nome"]
-            self.__usuariosfisicos[usuario].email = novos_dados_usuario["email"]
-            self.__usuariosfisicos[usuario].cpf = novos_dados_usuario["cpf"]
-            self.__telaUsuario.mensagem_pro_usuario("Dados Alterados Com Sucesso")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                novos_dados_usuario = self.__telaUsuario.pega_dados_conta_fisica()
+                self.__usuariosfisicos.pop(usuario)
+                pessoa_fisica = UsuarioFisico(novos_dados_usuario["nome"], novos_dados_usuario["email"],
+                                              novos_dados_usuario["cpf"])
+                if novos_dados_usuario["email"] not in self.__usuariosfisicos and novos_dados_usuario["cpf"] not in self.__usuariosfisicos:
+                    self.__usuariosfisicos[novos_dados_usuario["email"]] = pessoa_fisica
+                    self.__telaUsuario.mensagem_pro_usuario("Dados Alterados Com Sucesso")
+                else:
+                    self.__telaUsuario.mensagem_pro_usuario("Erro,Ja existe um usario com esses dados")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
+
 
     def alterar_conta_juridica(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usuario_juridico(typed["email"])
-        if usuario is not None:
-            novos_dados_usuario = self.__telaUsuario.pega_dados_conta_juridica()
-            self.__usuariosjuridicos[usuario].nome = novos_dados_usuario["nome"]
-            self.__usuariosjuridicos[usuario].email = novos_dados_usuario["email"]
-            self.__usuariosjuridicos[usuario].cnpj = novos_dados_usuario["cnpj"]
-            self.__telaUsuario.mensagem_pro_usuario("Dados Alterados Com Sucesso")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                novos_dados_usuario = self.__telaUsuario.pega_dados_conta_juridica()
+                self.__usuariosjuridicos.pop(usuario)
+                pessoa_juridica = UsuarioJuridico(novos_dados_usuario["nome"], novos_dados_usuario["email"],
+                                                  novos_dados_usuario["cnpj"])
+                if novos_dados_usuario["email"] not in self.__usuariosjuridicos and novos_dados_usuario["cnpj"] not in self.__usuariosjuridicos:
+                    self.__usuariosjuridicos[novos_dados_usuario["email"]] = pessoa_juridica
+                    self.__telaUsuario.mensagem_pro_usuario("Dados Alterados Com Sucesso")
+                else:
+                    self.__telaUsuario.mensagem_pro_usuario("Erro,Ja existe um usario com esses dados")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
 
     def excluir_conta_fisica(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usario_fisico(typed["email"])
-        if usuario is not None:
-            self.__usuariosfisicos.pop(usuario)
-            self.__telaUsuario.mensagem_pro_usuario("Usuario Removido com Sucesso")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                self.__usuariosfisicos.pop(usuario)
+                self.__telaUsuario.mensagem_pro_usuario("Usuario Removido com Sucesso")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
+
 
     def excluir_conta_juridica(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usuario_juridico(typed["email"])
-        if usuario is not None:
-            self.__usuariosjuridicos.pop(usuario)
-            self.__telaUsuario.mensagem_pro_usuario("Usuario Removido com Sucesso")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                self.__usuariosjuridicos.pop(usuario)
+                self.__telaUsuario.mensagem_pro_usuario("Usuario Removido com Sucesso")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
 
     def verifica_usuario_juridico(self):
         typed = self.__telaUsuario.tela_login_juridica()
@@ -163,22 +194,28 @@ class ControladorUsuario:
     def listar_usuario_fisico(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usario_fisico(typed["email"])
-        if usuario is not None:
-            self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosfisicos[usuario].nome} "
-                                                    f"{self.__usuariosfisicos[usuario].email}"
-                                                    f" {self.__usuariosfisicos[usuario].cpf}")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosfisicos[usuario].nome} "
+                                                        f"{self.__usuariosfisicos[usuario].email}"
+                                                        f" {self.__usuariosfisicos[usuario].cpf}")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
 
     def listar_usuario_juridico(self):
         typed = self.__telaUsuario.seleciona_usuario()
         usuario = self.pega_usuario_juridico(typed["email"])
-        if usuario is not None:
-            self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosfisicos[usuario].nome} "
-                                                    f"{self.__usuariosfisicos[usuario].email}"
-                                                    f" {self.__usuariosfisicos[usuario].cnpj}")
-        else:
-            self.__telaUsuario.mensagem_pro_usuario("ATENCAO: Usuario não existente")
+        try:
+            if usuario is not None:
+                self.__telaUsuario.mensagem_pro_usuario(f"{self.__usuariosjuridicos[usuario].nome} "
+                                                        f"{self.__usuariosjuridicos[usuario].email}"
+                                                        f" {self.__usuariosjuridicos[usuario].cnpj}")
+            else:
+                raise (UsuarioNaoExistenteException())
+        except UsuarioNaoExistenteException as e:
+            self.__telaUsuario.mensagem_pro_usuario(e)
 
     def retornar(self):
         self.__controlador_sistema.abre_tela()

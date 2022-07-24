@@ -1,5 +1,5 @@
 from entidade.supermercado import Supermercado
-from limite.telaSupermercado import TelaSupermercado
+from limite.tela_supermercado import TelaSupermercado
 
 
 class ControladorMercado:
@@ -26,12 +26,6 @@ class ControladorMercado:
         for mercado in self.__lista_supermercados:
             if mercado == nome:
                 return self.__lista_supermercados[mercado]
-    
-    def retorna_nomes_mercado(self):
-        nomes = []
-        for mercado in self.__lista_supermercados:
-            nomes.append(mercado)
-        return nomes
 
     def cadastrar_supermercado(self):
         typed = self.__telaSupermercado.pega_dados_supermercado()
@@ -55,12 +49,13 @@ class ControladorMercado:
             if dono == self.__lista_supermercados[mercado].dono:
                 if mercado is not None:
                     novos_dados_mercado = self.__telaSupermercado.pega_dados_supermercado()
-                    self.__lista_supermercados[mercado].nome = novos_dados_mercado["nome"]
-                    self.__lista_supermercados[mercado].endereco = novos_dados_mercado["endereco"]
-                    self.__lista_supermercados[mercado].dono = dono
-                    self.__telaSupermercado.mensagem_pro_usuario("Dados Alterados Com Sucesso")
-                else:
-                    self.__telaSupermercado.mensagem_pro_usuario("Mercado Nao Encontrado")
+                    self.__lista_supermercados.pop(mercado)
+                    mercado = Supermercado(novos_dados_mercado["nome"], novos_dados_mercado["endereco"], dono)
+                    if novos_dados_mercado["endereco"] not in self.__lista_supermercados and novos_dados_mercado["nome"] not in self.__lista_supermercados:
+                        self.__lista_supermercados[novos_dados_mercado["nome"]] = mercado
+                        self.__telaSupermercado.mensagem_pro_usuario("Dados Alterados Com Sucesso Com Sucesso")
+                    else:
+                        self.__telaSupermercado.mensagem_pro_usuario("Erro: Ja existe um supermercado com esses dados")
             else:
                 self.__telaSupermercado.mensagem_pro_usuario("Dados do Dono Incorretos")
         else:
