@@ -10,6 +10,8 @@ class ControladorQualificador:
         info_qualificador = self.__tela_qualificador.pega_dados()
         titulo =  info_qualificador["titulo"]
         descricao =  info_qualificador["descricao"]
+        if (titulo is None) and descricao is None:
+            return None
         qualificador = Qualificador(titulo, descricao)
         return qualificador
     
@@ -17,9 +19,11 @@ class ControladorQualificador:
         qualificadores = []
         while True:
             novo_qualificador = self.novo_qualificador()
+            if novo_qualificador is None:
+                break
             qualificadores.append(novo_qualificador)
-            continuar = self.__tela_qualificador.pega_codigo("Adicionar mais Qualificadores ?\n 1 - Sim\n 2 - Não",[1,2])
-            if continuar == 2:
+            continuar = self.__tela_qualificador.continuar()
+            if continuar == 0:
                 break
         return qualificadores
     

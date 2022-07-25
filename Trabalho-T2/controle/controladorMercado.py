@@ -1,5 +1,5 @@
 from entidade.supermercado import Supermercado
-from limite.tela_supermercado import TelaSupermercado
+from limite.telaSupermercado import TelaSupermercado
 from DAOs.mercado_dao import MercadoDAO
 
 

@@ -1,4 +1,4 @@
-from limite.tela_usuario import TelaUsuario
+from limite.telaUsuario import TelaUsuario
 from entidade.usuarioFisico import UsuarioFisico
 from entidade.usuarioJuridico import UsuarioJuridico
 from controle.usuario_ja_cadastrado_exception import UsuarioJaCadastradoException

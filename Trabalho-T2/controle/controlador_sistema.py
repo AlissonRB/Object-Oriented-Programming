@@ -4,7 +4,7 @@ from controle.controlador_qualificador import ControladorQualificador
 from controle.controladorMercado import ControladorMercado
 from controle.controladorUsuario import ControladorUsuario
 from entidade.usuarioFisico import UsuarioFisico
-from limite.tela_sistema import TelaSistema
+from limite.telaSistema import TelaSistema
 
 
 class ControladorSistema:
