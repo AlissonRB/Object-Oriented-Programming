@@ -98,11 +98,11 @@ class TelaProduto(TelaAbstrata):
                 categoria = values['categoria']
                 nome = values['nome']
                 preco = float(values['preco'])
-                if supermercado or categoria or preco or categoria or nome == '':
-                    raise ValueError
-                else:
+                if supermercado and categoria and preco and categoria and nome is not None:
                     self.close()
                     return {"nome": nome, "preco": preco, 'categoria': categoria, 'supermercado': supermercado}
+                else:
+                    raise ValueError
             except ValueError:
                 self.close()
                 self.mensagem_pro_usuario('Valores não aceitos')
@@ -160,7 +160,7 @@ class TelaProduto(TelaAbstrata):
         string_produtos = ""
         for dado in lista_produtos:
             string_produtos = string_produtos + "Produto: " + dado["nome"] + '\n'
-            string_produtos = string_produtos + "Preço: " + str(dado["preco"]) + '\n'
+            string_produtos = string_produtos + "Preço: " + "{:.2f}".format(dado["preco"]) + '\n'
             string_produtos = string_produtos + "Categoria: " + str(dado["categoria"]) + '\n'
             string_produtos = string_produtos + "Codigo: " + str(dado["codigo"]) + '\n\n'
 
@@ -172,7 +172,6 @@ class TelaProduto(TelaAbstrata):
         string_dados = ""
         for dado in dados_produto:
             string_dados = string_dados + "NOME DO PRODUTO: " + dado["nome"] + '\n'
-            #string_dados = string_dados + "QUALIFICADOR: " + str(dado["qualificador"]) + '\n'
             string_dados = string_dados + "PREÇO: " + "{:.2f}".format(dado["preco"]) + '\n'
             string_dados = string_dados + "SUPERMERCADO: " + str(dado["mercado"]) + '\n\n'
 

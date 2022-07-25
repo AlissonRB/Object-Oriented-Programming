@@ -48,7 +48,6 @@ class ControladorProduto:
                                     novo_produto.add_preco(pega_dados["preco"])
                                     self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
                                     self.__produto_DAO.add(novo_produto)
-                                    self.adicionar_registro(novo_produto, pega_dados["preco"], "inclusão")
                                     self.__tela_produto.mensagem_pro_usuario("Produto cadastrado com sucesso!")
                             else:
                                     self.__tela_produto.mensagem_pro_usuario("Esse produto já existe")
@@ -92,14 +91,9 @@ class ControladorProduto:
                 for item in self.__produto_DAO.get_all():
                     if item.nome == nome_produto['nome']:
                         nome = item.nome
-                        for qualificador in item.qualificadores:
-                            lista = []
-                            quali = qualificador.titulo + ":" + qualificador.descricao
-                            lista.append(quali)
-                        qualificador1 = lista
                         preco = item.confirmacoes.valor
                         mercado = item.supermercado.nome
-                        info.append({"nome": nome, "qualificador": qualificador1, "preco": preco, "mercado": mercado})
+                        info.append({"nome": nome, "preco": preco, "mercado": mercado})
                 if len(info) == 0:
                     self.__tela_produto.mensagem_pro_usuario("Nenhum produto encontrado !")
                 else:
