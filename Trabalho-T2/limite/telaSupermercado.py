@@ -54,8 +54,6 @@ class TelaSupermercado(TelaAbstrata):
         else:
             return {"nome": nome, "endereco": endereco}
 
-    def mostra_dados_supermercado(self):
-        pass
 
     def mensagem_pro_usuario(self, mensagem: str):
         sg.popup("", mensagem)
