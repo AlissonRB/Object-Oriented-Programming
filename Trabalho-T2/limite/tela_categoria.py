@@ -2,20 +2,8 @@ from limite.telaAbstrata import TelaAbstrata
 import PySimpleGUI as sg
 
 class TelaCategoria(TelaAbstrata):
-    pass
-
-    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos = None):
-        while True:
-            valor_lido = input(mensagem)
-            try:
-                inteiro = int(valor_lido)
-                if inteiros_validos and inteiro not in inteiros_validos:
-                    raise ValueError
-                return inteiro
-            except ValueError:
-                print("Valor incorreto: Digite um valor numérico valido")
-                if inteiros_validos:
-                    print("Valores validos:", inteiros_validos)
+    def __init__(self):
+        self.__window = None
 
     def telaopcoes(self):
         self.init_components()
@@ -35,7 +23,7 @@ class TelaCategoria(TelaAbstrata):
         return opcao
 
     def init_components(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('-------- Categorias ----------', font=("Helvica",25))],
             [sg.Text('Escolha sua opção', font=("Helvica",15))],
@@ -49,8 +37,7 @@ class TelaCategoria(TelaAbstrata):
         self.__window = sg.Window('Sistema de Supermercado').Layout(layout)
 
     def pega_dados(self):
-        print("---- Cadastrar Categoria ----")
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
         [sg.Text('-------- Cadastrar Categoria ----------', font=("Helvica", 25))],
         [sg.Text('Nome:', size=(15, 1)), sg.InputText('', key='nome')],
@@ -63,14 +50,22 @@ class TelaCategoria(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
+        if button in ('Confirmar'):
+            try:
+                nome = values['nome']
+                descricao = values['descricao']
+                if nome == '' or descricao == '' :
+                    raise ValueError
+                else:
+                    self.close()
+                    return {"nome": nome, "descricao": descricao}
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
-        nome = values['nome']
-        descricao = values['descricao']
-        self.close()
-        return {"nome": nome, "descricao": descricao}
-    
     def pega_nome(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('Nome:', size=(15, 1)), sg.InputText('', key='nome')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
@@ -80,27 +75,44 @@ class TelaCategoria(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-
-        nome = values['nome']
-        self.close()
-        return nome
+        if button in ('Confirmar'):
+            try:
+                nome = values['nome']
+                if nome == '':
+                    raise ValueError
+                else:
+                    self.close()
+                    return nome
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def pega_descricao(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text('Nova Descrição:', size=(15, 1)), sg.InputText('', key='nome')],
+            [sg.Text('Nova Descrição:', size=(15, 1)), sg.InputText('', key='descricao')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
         self.__window = sg.Window('Sistema de Supermercado').Layout(layout)
         button, values = self.open()
+
         if button in (None, 'Cancelar'):
             self.close()
             return None
+        if button in ('Confirmar'):
+            try:
+                descricao = values['descricao']
+                if descricao == '':
+                    raise ValueError
+                else:
+                    self.close()
+                    return descricao
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
-        nome = values['nome']
-        self.close()
-        return nome
-    
     def lista_categoria(self, info_categoria):
         categorias = ""
         for dado in info_categoria:
@@ -109,7 +121,7 @@ class TelaCategoria(TelaAbstrata):
 
         sg.Popup('-------- LISTA DE CATEGORIAS ----------', categorias)
     
-    def mostra_msg(self, msg):
+    def mensagem_pro_usuario(self, msg):
         sg.Popup(msg)
     
     def close(self):

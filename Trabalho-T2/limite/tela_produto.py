@@ -1,4 +1,3 @@
-from click import command
 from limite.telaAbstrata import TelaAbstrata
 import PySimpleGUI as sg
 
@@ -24,15 +23,13 @@ class TelaProduto(TelaAbstrata):
             opcao = 5
         if values['6']:
             opcao = 6
-        if values['7']:
-            opcao = 7
         if values['0'] or button in (None, 'Voltar'):
             opcao = 0
         self.close()
         return opcao
 
     def init_components(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('-------- Produtos ----------', font=("Helvica",25))],
             [sg.Text('Escolha sua opção', font=("Helvica",15))],
@@ -42,27 +39,13 @@ class TelaProduto(TelaAbstrata):
             [sg.Radio('Excluir Produto',"RD1", key='4')],
             [sg.Radio('Registros de um Produto', "RD1", key='5')],
             [sg.Radio('Relatórios', "RD1", key='6')],
-            [sg.Radio('Excluir Preço', "RD1", key='7')],
             [sg.Radio('Voltar Para Tela Inicial',"RD1", key='0')],
             [sg.Button('Confirmar'), sg.Cancel('Voltar')]
         ]
         self.__window = sg.Window('Sistema de Supermercado').Layout(layout)
-
-    def le_numero_inteiro(self, mensagem: str = "", inteiros_validos = None):
-        while True:
-            valor_lido = input(mensagem)
-            try:
-                inteiro = int(valor_lido)
-                if inteiros_validos and inteiro not in inteiros_validos:
-                    raise ValueError
-                return inteiro
-            except ValueError:
-                print("Valor incorreto: Digite um valor numérico valido")
-                if inteiros_validos:
-                    print("Valores validos: ", inteiros_validos)
     
     def pega_dados(self,categorias, supermercados):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
         [sg.Text('-------- Cadastrar Produto ----------', font=("Helvica", 25))],
         [sg.Text('Nome:', size=(15, 1)), sg.InputText('', key='nome')],
@@ -77,18 +60,25 @@ class TelaProduto(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-        
-        nome = values['nome']
-        descricao = values['descricao']
-        preco = int(values['preco'])
-        categoria = values['categoria']
-        mercado = values['supermercado']
-
-        self.close()
-        return {"nome": nome, "descricao": descricao, "preco": preco, 'categoria': categoria, 'mercado': mercado}
+        if button in ('Confirmar'):
+            try:
+                nome = values['nome']
+                descricao = values['descricao']
+                preco = float(values['preco'])
+                categoria = values['categoria']
+                mercado = values['supermercado']
+                if nome or descricao or preco or categoria or mercado == '':
+                    raise ValueError
+                else:
+                    self.close()
+                    return {"nome": nome, "descricao": descricao, "preco": preco, 'categoria': categoria, 'mercado': mercado}
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def lancamento_preco(self,descricao_categoria, descricao_mercado):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
         [sg.Text('-------- Lançamento de Preços ----------', font=("Helvica", 25))],
         [sg.Text('Supermercado:'),sg.InputCombo(( descricao_mercado), size=(20, 3),key='supermercado'),sg.Text('Categoria:'),
@@ -102,18 +92,24 @@ class TelaProduto(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-
-        supermercado = values['supermercado']
-        categoria = values['categoria']
-        nome = values['nome']
-        preco = values['preco']
-
-        self.close()
-
-        return {"nome": nome, "preco": preco, 'categoria': categoria, 'supermercado': supermercado}
+        if button in ('Confirmar'):
+            try:
+                supermercado = values['supermercado']
+                categoria = values['categoria']
+                nome = values['nome']
+                preco = float(values['preco'])
+                if supermercado or categoria or preco or categoria or nome == '':
+                    raise ValueError
+                else:
+                    self.close()
+                    return {"nome": nome, "preco": preco, 'categoria': categoria, 'supermercado': supermercado}
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def pesquisar_preco(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('Nome Produto:', size=(15, 1)), sg.InputText('', key='nome')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
@@ -123,16 +119,23 @@ class TelaProduto(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-        nome = values['nome']
-        self.close()
-
-        return {"nome": nome}
-        
+        if button in ('Confirmar'):
+            try:
+                nome = values['nome']
+                if nome == '':
+                    raise ValueError
+                else:
+                    self.close()
+                    return {"nome": nome}
+            except ValueError:
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def pega_nome(self, msg):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
-            [sg.Text('Mercado:'),sg.InputCombo((msg), size=(20, 3), key='nome')],
+            [sg.Text('Nome Mercado:'),sg.InputCombo((msg), size=(20, 3), key='nome')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
         self.__window = sg.Window('Sistema de Supermercado').Layout(layout)
@@ -140,31 +143,29 @@ class TelaProduto(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-        nome = values['nome']
-        self.close()
-
-        return nome
-    
-    def pega_preço(self):
-        while True:
+        if button in ('Confirmar'):
             try:
-                preco = float(input("Preço: " )) #converter para duas casas
-                if not isinstance(preco,float):
+                nome = values['nome']
+                if nome == '':
                     raise ValueError
-                return preco
+                else:
+                    self.close()
+                    return nome
             except ValueError:
-                print("Valor inválido !")
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def produtos_por_mercado(self, lista_produtos):
-        string_todos_amigos = ""
+        string_produtos = ""
         for dado in lista_produtos:
-            string_todos_amigos = string_todos_amigos + "Produto: " + dado["nome"] + '\n'
-            string_todos_amigos = string_todos_amigos + "Preço: " + str(dado["preco"]) + '\n'
-            string_todos_amigos = string_todos_amigos + "Categoria: " + str(dado["categoria"]) + '\n'
-            string_todos_amigos = string_todos_amigos + "Codigo: " + str(dado["codigo"]) + '\n\n'
+            string_produtos = string_produtos + "Produto: " + dado["nome"] + '\n'
+            string_produtos = string_produtos + "Preço: " + str(dado["preco"]) + '\n'
+            string_produtos = string_produtos + "Categoria: " + str(dado["categoria"]) + '\n'
+            string_produtos = string_produtos + "Codigo: " + str(dado["codigo"]) + '\n\n'
 
 
-        sg.Popup('-------- PRODUTOS POR SUPERMERCADO ----------', string_todos_amigos)
+        sg.Popup('-------- PRODUTOS POR SUPERMERCADO ----------', string_produtos)
     
     def mostra_resultados_busca(self, dados_produto):
  
@@ -172,7 +173,7 @@ class TelaProduto(TelaAbstrata):
         for dado in dados_produto:
             string_dados = string_dados + "NOME DO PRODUTO: " + dado["nome"] + '\n'
             #string_dados = string_dados + "QUALIFICADOR: " + str(dado["qualificador"]) + '\n'
-            string_dados = string_dados + "PREÇO: " + str(dado["preco"]) + '\n'
+            string_dados = string_dados + "PREÇO: " + "{:.2f}".format(dado["preco"]) + '\n'
             string_dados = string_dados + "SUPERMERCADO: " + str(dado["mercado"]) + '\n\n'
 
         sg.Popup('-------- PESQUISA PREÇOS ----------', string_dados)
@@ -181,30 +182,27 @@ class TelaProduto(TelaAbstrata):
         nome = nome
         precos = ""
         for dado in info_precos:
-            precos = precos + "R$: " + str(dado) + '\n'
+            precos = precos + "R$: {:.2f}".format(dado) + '\n'
 
         sg.Popup(f'-------- Precos de {nome}  ----------', precos)
 
     def mostra_registros(self, dados_registro):
-        #print(dados_registro["data"], dados_registro["operacao"], dados_registro["valor"])
-        #print("\n")
         string_registros = ""
         for dado in dados_registro:
             string_registros = string_registros + "Data: " + str(dado["data"]) + '\n'
             string_registros = string_registros + "Operação: " + str(dado["operacao"]) + '\n'
-            string_registros = string_registros + "valor: " + str(dado["valor"]) + '\n'
+            string_registros = string_registros + "valor: " + "R$: {:.2f}".format(dado["valor"]) + '\n'
             string_registros = string_registros + "Usuario: " + str(dado["usuario"]) + '\n\n'
 
         sg.Popup('-------- Registros de um Produto ----------', string_registros)
 
     def relatorios(self):
-        sg.ChangeLookAndFeel('HotDogStand')
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('-------- Relatórios ----------', font=("Helvica",25))],
             [sg.Text('Escolha sua opção', font=("Helvica",15))],
             [sg.Radio('Produtos por Supermercado',"RD1", key='1')],
-            [sg.Radio('Evolução dos Preços',"RD1", key='2')],
-            [sg.Radio('Lista de Preços de um Produto',"RD1", key='3')],
+            [sg.Radio('Lista de Preços de um Produto',"RD1", key='2')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
         self.__window = sg.Window('Sistema de Supermercado').Layout(layout)
@@ -214,15 +212,13 @@ class TelaProduto(TelaAbstrata):
             opcao = 1
         if values['2']:
             opcao = 2
-        if values['3']:
-            opcao = 3
         if button in (None, 'Cancelar'):
             opcao = 0
         self.close()
         return opcao
 
-    def pega_inteiro(self):#fazer o tratamento aqui , tentar conerter para string o codigo
-        sg.ChangeLookAndFeel('HotDogStand')
+    def pega_inteiro(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
         layout = [
             [sg.Text('Codigo:'),sg.InputText('', key='codigo')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
@@ -232,28 +228,18 @@ class TelaProduto(TelaAbstrata):
         if button in (None, 'Cancelar'):
             self.close()
             return None
-        codigo = values['codigo']
-        self.close()
-        return codigo
-
-        while True:
+        if button in ('Confirmar'):
             try:
-                codigo = int(input(msg))
-                if not isinstance(codigo,int):
+                codigo = values['codigo']
+                if codigo == '':
                     raise ValueError
-                return codigo
+                else:
+                    self.close()
+                    return codigo
             except ValueError:
-                print("Valor inválido:")
-
-    def pega_float(self, msg):
-        while True:
-            try:
-                codigo = float(input(msg))
-                if not isinstance(codigo,float):
-                    raise ValueError
-                return codigo
-            except ValueError:
-                print("Valor inválido:")
+                self.close()
+                self.mensagem_pro_usuario('Valores não aceitos')
+                return None
 
     def mensagem_pro_usuario(self, msg):
         sg.Popup(msg)

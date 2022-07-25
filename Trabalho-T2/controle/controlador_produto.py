@@ -38,7 +38,7 @@ class ControladorProduto:
                 if verificar == True:
                     categoria = self.__controlador_sistema.controlador_categoria.pega_categoria_por_descricao(pega_dados["categoria"])  # pega a categoria
                     if (categoria is not None) and isinstance(categoria, Categoria):
-                        if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], int):  # rever para flutuante
+                        if (pega_dados["preco"] is not None) and isinstance(pega_dados["preco"], float):  # rever para flutuante
                             qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
                             produto_existe = self.verifica_existencia_produto(pega_dados["nome"], mercado)
                             if produto_existe == None:
@@ -86,8 +86,6 @@ class ControladorProduto:
 
     def pesquisar_preco(self):
         info = []
-        # buscar pelo nome do produto com ou sem qualificadores
-        # ordenar os resultados por preço, número de confirmações ou por data de postagem.
         nome_produto = self.__tela_produto.pesquisar_preco()
         if nome_produto is not None:
             if isinstance(nome_produto['nome'], str):
@@ -109,10 +107,7 @@ class ControladorProduto:
             else:
                 self.__tela_produto.mensagem_pro_usuario("Nome do produto não é válido!")
 
-    def lancar_preco(self):  #aqui é o codigo final
-        # pegar o usuario logado para associar ao produto
-        # depois aponta o preço com duas casas decimais, e confirma ou lança novo preço
-        # Um usuário somente poderá atualizar/cadastrar o preço de um determinado produto uma vez por dia.
+    def lancar_preco(self):
         descricao_categoria = self.__controlador_sistema.controlador_categoria.retorna_nomes_categorias()
         descricao_mercado = self.__controlador_sistema.controladorMercado.retorna_nomes_mercado()
         lancar = self.__tela_produto.lancamento_preco(descricao_categoria, descricao_mercado) #retorna mercado, categoria, nome e preço
@@ -122,9 +117,8 @@ class ControladorProduto:
             if (supermercado is not None) and isinstance(supermercado, Supermercado):
                 verificar = self.verifica_supermercado(supermercado)
                 if verificar == True:
-                    categoria = self.__controlador_sistema.controlador_categoria.pega_categoria_por_descricao(lancar["categoria"])  # #seleciona a categoria
+                    #categoria = self.__controlador_sistema.controlador_categoria.pega_categoria_por_descricao(lancar["categoria"])  # #seleciona a categoria
                     nome_produto = lancar['nome']  # seleciona o nome do produto
-                    qualificadores = self.__controlador_sistema.controlador_qualificador.inclui_qualificador()  # adicina uma lista de qualificadores
                     verificar_produto = self.verifica_existencia_produto(nome_produto, supermercado)
                     if (verificar_produto is not None) and isinstance(verificar_produto, Produto):
                         if verificar_produto.usuario not in self.__usuarios_tempo:
@@ -135,7 +129,7 @@ class ControladorProduto:
                             self.__tela_produto.mensagem_pro_usuario('Novo preço lançado com sucesso')
                     else:
                         if (datetime.date.today() - self.__usuarios_tempo[verificar_produto.usuario]) >= dia:
-                            novo_preco = self.__tela_produto.pega_preço()
+                            novo_preco = lancar['preco']#self.__tela_produto.pega_preço()
                             verificar_produto.add_preco(novo_preco)
                             self.adicionar_registro(verificar_produto, novo_preco, "inclusão")
                             self.__tela_produto.mensagem_pro_usuario("Novo preço de " + str(novo_preco) + " lançado")
@@ -188,7 +182,7 @@ class ControladorProduto:
 
     def relatorio(self):
         # evolução dos preços de um produto por data, com valor mais caro e mais barato já registrado
-        lista_opcoes = {1: self.produtos_por_supermercado, 2: self.evolucao_precos, 3: self.listar_precos_de_um_produto,
+        lista_opcoes = {1: self.produtos_por_supermercado, 2: self.listar_precos_de_um_produto,
                         0: self.abre_tela}
         while True:
             opcao_escolhida = self.__tela_produto.relatorios()
@@ -212,27 +206,6 @@ class ControladorProduto:
             self.__tela_produto.produtos_por_mercado(lista_produtos)
         else:
             self.__tela_produto.mensagem_pro_usuario("Mercado não encontrado")
-
-    def evolucao_precos(self):
-        pass
-        # nome_mercado = self.__tela_produto.pega_nome("Nome do mercado")
-        # supermercado = self.__controlador_sistema.controladorMercado.retorna_supermercado(nome_mercado)
-        # if (supermercado is not None) and isinstance(supermercado,Supermercado):
-        # nome_produto = self.__tela_produto.pega_nome("Nome do Produto")
-        # if (nome_produto is not None) and isinstance(nome_produto, str):
-        # for produto in self.__lista_produtos:
-        # if produto.nome == nome_produto:
-        # if produto.supermercado == supermercado:
-        # for preco in produto.lista_precos:
-        # info = {"Data": preco.postagem, "Valor": preco.valor}
-
-    def excluir_preco(self):
-        pass #retirar
-
-    def alterar_preco(self):
-        # pega o codigo do produto e lista os preços e altera um deles
-        # pensando o que faz sentido alterar
-        pass
 
     def listar_precos_de_um_produto(self):
         info = []
@@ -264,7 +237,7 @@ class ControladorProduto:
     def abre_tela(self):
         lista_opcoes = {1: self.cadastrar_produto, 2: self.pesquisar_preco, 3: self.lancar_preco,
                         4: self.excluir_produto,
-                        5: self.registros_de_um_produto, 6: self.relatorio, 7: self.excluir_preco, 0: self.retornar}
+                        5: self.registros_de_um_produto, 6: self.relatorio, 0: self.retornar}
 
         while True:
             opcoes = self.__tela_produto.telaopcoes()

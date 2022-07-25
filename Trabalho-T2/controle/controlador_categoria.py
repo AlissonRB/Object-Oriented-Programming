@@ -8,7 +8,7 @@ class ControladorCategoria:
         self.__controlador_sistema = controlador_sistema
         self.__categoria_DAO = CategoriaDAO()
         self.__tela_categoria = TelaCategoria()
-    
+
     def cadastrar_categoria(self): #arrumar o cadastrar categoria para não cadastrar categorias duplicadas
         dados_categoria = self.__tela_categoria.pega_dados()
         if dados_categoria is not None:
@@ -17,9 +17,9 @@ class ControladorCategoria:
                 if  verificar is None:
                     nova_categoria = Categoria(dados_categoria['nome'], dados_categoria['descricao'])
                     self.__categoria_DAO.add(nova_categoria)
-                    self.__tela_categoria.mostra_msg("Categoria cadastrado com sucesso!")
+                    self.__tela_categoria.mensagem_pro_usuario("Categoria cadastrado com sucesso!")
                 else:
-                        self.__tela_categoria.mostra_msg("Categoria já está cadastrada")
+                        self.__tela_categoria.mensagem_pro_usuario("Categoria já está cadastrada")
 
     def gerar_codigo(self):
         existe  = False
@@ -52,15 +52,6 @@ class ControladorCategoria:
             descricao.append(categoria.nome)
         return descricao
 
-    def pega_codigo(self):
-        opcoes = []
-        for categoria in self.__lista_categorias:
-            opcoes.append(categoria.codigo)
-        codigo = self.__tela_categoria.pega_codigo("Digite o código da categoria",opcoes)
-        for categoria in self.__lista_categorias:
-            if codigo == categoria.codigo:
-                return categoria
-
     def retornar(self):
         self.__controlador_sistema.abre_tela()
     
@@ -72,10 +63,10 @@ class ControladorCategoria:
                 nova_descricao = self.__tela_categoria.pega_descricao()
                 categoria.descricao = nova_descricao
                 self.__categoria_DAO.update(categoria)
-                self.__tela_categoria.mostra_msg("Categoria alterada")
+                self.__tela_categoria.mensagem_pro_usuario("Categoria alterada")
             
             else:
-                self.__tela_categoria.mostra_msg("Categoria não encontrada")
+                self.__tela_categoria.mensagem_pro_usuario("Categoria não encontrada")
 
     def excluir_categoria(self):
         nome_categoria = self.__tela_categoria.pega_nome()
@@ -83,9 +74,9 @@ class ControladorCategoria:
             categoria = self.pega_categoria_por_descricao(nome_categoria)
             if (categoria is not None):
                 self.__categoria_DAO.remove(categoria.nome)
-                self.__tela_categoria.mostra_msg("Categoria excluida com sucesso")
+                self.__tela_categoria.mensagem_pro_usuario("Categoria excluida com sucesso")
             else:
-                self.__tela_categoria.mostra_msg("Categoria não encontrada")
+                self.__tela_categoria.mensagem_pro_usuario("Categoria não encontrada")
 
     def abre_tela(self):
         opcoes = {1: self.cadastrar_categoria, 2: self.alterar_categoria, 3: self.excluir_categoria, 

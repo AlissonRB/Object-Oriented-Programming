@@ -7,6 +7,13 @@ class ControladorMercado:
         self.__lista_supermercados = {}
         self.__telaSupermercado = TelaSupermercado()
         self.__controladorSistema = controladorSistema
+        #testes
+        dono = self.__controladorSistema.controladorUsuario.user_juridico
+        self.mercado1 = Supermercado("ABC", "rua", dono)
+        self.__lista_supermercados["ABC"] = self.mercado1
+        dono2 = self.__controladorSistema.controladorUsuario.user_juridico2
+        self.mercado2 = Supermercado("BIG", "rua", dono2)
+        self.__lista_supermercados["BIG"] = self.mercado2
 
     @property
     def lista_supermercados(self):
