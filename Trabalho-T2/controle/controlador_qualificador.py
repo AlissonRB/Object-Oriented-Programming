@@ -8,10 +8,10 @@ class ControladorQualificador:
 
     def novo_qualificador(self):
         info_qualificador = self.__tela_qualificador.pega_dados()
+        if info_qualificador is None:
+            return None
         titulo =  info_qualificador["titulo"]
         descricao =  info_qualificador["descricao"]
-        if (titulo is None) and descricao is None:
-            return None
         qualificador = Qualificador(titulo, descricao)
         return qualificador
     
@@ -34,4 +34,3 @@ class ControladorQualificador:
             return qualificador
         else:
             return None
-        

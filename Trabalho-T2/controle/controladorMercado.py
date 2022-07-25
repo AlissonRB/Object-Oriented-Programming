@@ -21,6 +21,12 @@ class ControladorMercado:
                 return mercado
         return None
 
+    def retorna_nomes_mercado(self):
+        nomes = []
+        for mercado in self.__mercado_Dao.get_all():
+            nomes.append(mercado.nome)
+        return nomes
+
     def cadastrar_supermercado(self):
         typed = self.__telaSupermercado.pega_dados_supermercado()
         dono = self.__controladorSistema.cria_dono()
